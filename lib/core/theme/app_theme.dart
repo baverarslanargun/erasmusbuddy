@@ -21,7 +21,7 @@ class AppTheme {
         foregroundColor: AppColors.surface,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 1,
         margin: EdgeInsets.zero,
