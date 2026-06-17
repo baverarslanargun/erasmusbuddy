@@ -12,23 +12,44 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('Login Screen'),
+            const SizedBox(height: 32),
+            const Text('Login to ErasmusBuddy'),
+            const SizedBox(height: 8),
+            const Text('Use your email and password to continue.'),
+            const SizedBox(height: 24),
+            const TextField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 16),
+            const TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 24),
             FilledButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, HomeScreen.routeName);
               },
-              child: const Text('Go to Home'),
+              child: const Text('Login'),
             ),
+            const SizedBox(height: 8),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, RegisterScreen.routeName);
               },
-              child: const Text('Go to Register'),
+              child: const Text('Go to register screen'),
             ),
           ],
         ),
