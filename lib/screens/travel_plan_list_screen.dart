@@ -11,21 +11,21 @@ class TravelPlanListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Travel Ideas')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Travel Idea List Screen'),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () {
-                Navigator.pushNamed(context, TravelPlanDetailScreen.routeName);
-              },
-              child: const Text('Open detail'),
+      body: ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Sample Travel Idea',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          ],
+          ),
         ),
-      ),
+      ],
+    ),
     );
   }
 }
