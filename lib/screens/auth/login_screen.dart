@@ -18,14 +18,18 @@ class LoginScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 32),
-            const Text('Login to ErasmusBuddy'),
+            Text(
+              'Login to ErasmusBuddy',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 8),
-            const Text('Use your email and password to continue.'),
+            const Text('Continue to explore travel ideas shared by Erasmus students.'),
             const SizedBox(height: 24),
             const TextField(
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined),
                 border: OutlineInputBorder(),
               ),
             ),
@@ -34,6 +38,7 @@ class LoginScreen extends StatelessWidget {
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
+                prefixIcon: Icon(Icons.lock_outline),
                 border: OutlineInputBorder(),
               ),
             ),
@@ -49,7 +54,7 @@ class LoginScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, RegisterScreen.routeName);
               },
-              child: const Text('Go to register screen'),
+              child: const Text('Create an account'),
             ),
           ],
         ),

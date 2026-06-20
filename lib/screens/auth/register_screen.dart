@@ -50,6 +50,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 						const Text('Join ErasmusBuddy'),
 						const SizedBox(height: 8),
 						Text('Step ${step + 1} of 3'),
+						const SizedBox(height: 12),
+						LinearProgressIndicator(value: (step + 1) / 3),
 						const SizedBox(height: 24),
 						Expanded(child: currentStepContent()),
 						Row(
@@ -97,10 +99,13 @@ class AccountStep extends StatelessWidget {
 			crossAxisAlignment: CrossAxisAlignment.stretch,
 			children: [
 				Text('Account information'),
+				SizedBox(height: 8),
+				Text('Create your basic student account.'),
 				SizedBox(height: 16),
 				TextField(
 					decoration: InputDecoration(
-						labelText: 'Name',
+						labelText: 'Full name',
+						prefixIcon: Icon(Icons.person_outline),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -109,6 +114,7 @@ class AccountStep extends StatelessWidget {
 					keyboardType: TextInputType.emailAddress,
 					decoration: InputDecoration(
 						labelText: 'Email',
+						prefixIcon: Icon(Icons.email_outlined),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -117,6 +123,7 @@ class AccountStep extends StatelessWidget {
 					obscureText: true,
 					decoration: InputDecoration(
 						labelText: 'Password',
+						prefixIcon: Icon(Icons.lock_outline),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -134,10 +141,13 @@ class ErasmusInfoStep extends StatelessWidget {
 			crossAxisAlignment: CrossAxisAlignment.stretch,
 			children: [
 				Text('Erasmus information'),
+				SizedBox(height: 8),
+				Text('Tell others where your Erasmus experience is happening.'),
 				SizedBox(height: 16),
 				TextField(
 					decoration: InputDecoration(
 						labelText: 'Home university',
+						prefixIcon: Icon(Icons.school_outlined),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -145,6 +155,7 @@ class ErasmusInfoStep extends StatelessWidget {
 				TextField(
 					decoration: InputDecoration(
 						labelText: 'Erasmus city',
+						prefixIcon: Icon(Icons.location_city_outlined),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -152,6 +163,7 @@ class ErasmusInfoStep extends StatelessWidget {
 				TextField(
 					decoration: InputDecoration(
 						labelText: 'Country',
+						prefixIcon: Icon(Icons.flag_outlined),
 						border: OutlineInputBorder(),
 					),
 				),
@@ -169,6 +181,8 @@ class TravelInterestsStep extends StatelessWidget {
 			crossAxisAlignment: CrossAxisAlignment.stretch,
 			children: [
 				Text('Travel interests'),
+				SizedBox(height: 8),
+				Text('Choose a few travel idea types you might like.'),
 				SizedBox(height: 16),
 				Wrap(
 					spacing: 8,
@@ -179,6 +193,7 @@ class TravelInterestsStep extends StatelessWidget {
 						Chip(label: Text('City walks')),
 						Chip(label: Text('Food spots')),
 						Chip(label: Text('Museums')),
+						Chip(label: Text('Nature')),
 					],
 				),
 				SizedBox(height: 24),
