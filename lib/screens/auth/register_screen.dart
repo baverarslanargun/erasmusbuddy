@@ -61,7 +61,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 						Expanded(
 							child: Form(
 								key: formKey,
-								child: currentStepContent(),
+								child: SingleChildScrollView(
+									child: currentStepContent(),
+								),
 							),
 						),
 						Row(
@@ -100,8 +102,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
 	}
 }
 
-class AccountStep extends StatelessWidget {
+class AccountStep extends StatefulWidget {
 	const AccountStep({super.key});
+
+	@override
+	State<AccountStep> createState() => _AccountStepState();
+}
+
+class _AccountStepState extends State<AccountStep> {
+	final passwordController = TextEditingController();
+	bool showPassword = false;
+	bool showConfirmPassword = false;
+
+	@override
+	void dispose() {
+		passwordController.dispose();
+		super.dispose();
+	}
 
 	String? validateUsername(String? value) {
 		final username = value?.trim() ?? '';
@@ -149,6 +166,20 @@ class AccountStep extends StatelessWidget {
 		return null;
 	}
 
+	String? validateConfirmPassword(String? value) {
+		final confirmPassword = value ?? '';
+
+		if (confirmPassword.isEmpty) {
+			return 'Confirm your password';
+		}
+
+		if (confirmPassword != passwordController.text) {
+			return 'Passwords do not match';
+		}
+
+		return null;
+	}
+
 	@override
 	Widget build(BuildContext context) {
 		return Column(
@@ -178,19 +209,49 @@ class AccountStep extends StatelessWidget {
 				),
 				const SizedBox(height: 16),
 				TextFormField(
-					obscureText: true,
+					controller: passwordController,
+					obscureText: !showPassword,
 					validator: validatePassword,
-					decoration: const InputDecoration(
+					decoration: InputDecoration(
 						labelText: 'Password',
-						prefixIcon: Icon(Icons.lock_outline),
-						border: OutlineInputBorder(),
+						prefixIcon: const Icon(Icons.lock_outline),
+						suffixIcon: IconButton(
+							onPressed: () {
+								setState(() {
+									showPassword = !showPassword;
+								});
+							},
+							icon: Icon(
+								showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+							),
+						),
+						border: const OutlineInputBorder(),
+					),
+				),
+				const SizedBox(height: 16),
+				TextFormField(
+					obscureText: !showConfirmPassword,
+					validator: validateConfirmPassword,
+					decoration: InputDecoration(
+						labelText: 'Confirm password',
+						prefixIcon: const Icon(Icons.lock_outline),
+						suffixIcon: IconButton(
+							onPressed: () {
+								setState(() {
+									showConfirmPassword = !showConfirmPassword;
+								});
+							},
+							icon: Icon(
+								showConfirmPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+							),
+						),
+						border: const OutlineInputBorder(),
 					),
 				),
 			],
 		);
 	}
 }
-
 class ErasmusInfoStep extends StatelessWidget {
 	const ErasmusInfoStep({super.key});
 
