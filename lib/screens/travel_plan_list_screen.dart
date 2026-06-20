@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'travel_plan_detail_screen.dart';
+import '../core/theme/app_colors.dart';
 
 class TravelPlanListScreen extends StatelessWidget {
   const TravelPlanListScreen({super.key});
@@ -67,17 +68,41 @@ class TravelPlanListScreen extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    idea['country']!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Duration: ${idea['duration']!}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: AppColors.secondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        idea['country']!,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: AppColors.secondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      idea['duration']!,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
                   const SizedBox(height: 8),
                   Text(
                     idea['description']!,
