@@ -49,9 +49,13 @@ class TravelPlanListScreen extends StatelessWidget {
         itemCount: _placeholderIdeas.length,
         itemBuilder: (context, index) {
           final idea = _placeholderIdeas[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: Padding(
+          return GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, TravelPlanDetailScreen.routeName);
+            },
+            child: Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +88,7 @@ class TravelPlanListScreen extends StatelessWidget {
                 ],
               ),
             ),
+          ),
           );
         },
       ),
