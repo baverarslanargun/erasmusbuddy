@@ -13,9 +13,14 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+	final formKey = GlobalKey<FormState>();
 	int step = 0;
 
 	void nextStep() {
+		if (!(formKey.currentState?.validate() ?? false)) {
+			return;
+		}
+
 		if (step < 2) {
 			setState(() {
 				step++;
@@ -53,7 +58,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 						const SizedBox(height: 12),
 						LinearProgressIndicator(value: (step + 1) / 3),
 						const SizedBox(height: 24),
-						Expanded(child: currentStepContent()),
+						Expanded(
+							child: Form(
+								key: formKey,
+								child: currentStepContent(),
+							),
+						),
 						Row(
 							children: [
 								Expanded(
@@ -93,35 +103,84 @@ class _RegisterScreenState extends State<RegisterScreen> {
 class AccountStep extends StatelessWidget {
 	const AccountStep({super.key});
 
+	String? validateUsername(String? value) {
+		final username = value?.trim() ?? '';
+
+		if (username.isEmpty) {
+			return 'Username is required';
+		}
+
+		if (username.length < 3) {
+			return 'Username must be at least 3 characters';
+		}
+
+		if (username.contains(' ')) {
+			return 'Username cannot include spaces';
+		}
+
+		return null;
+	}
+
+	String? validateEmail(String? value) {
+		final email = value?.trim() ?? '';
+
+		if (email.isEmpty) {
+			return 'Email is required';
+		}
+
+		if (!email.contains('@') || !email.contains('.')) {
+			return 'Enter a valid email';
+		}
+
+		return null;
+	}
+
+	String? validatePassword(String? value) {
+		final password = value ?? '';
+
+		if (password.isEmpty) {
+			return 'Password is required';
+		}
+
+		if (password.length < 6) {
+			return 'Password must be at least 6 characters';
+		}
+
+		return null;
+	}
+
 	@override
 	Widget build(BuildContext context) {
-		return const Column(
+		return Column(
 			crossAxisAlignment: CrossAxisAlignment.stretch,
 			children: [
-				Text('Account information'),
-				SizedBox(height: 8),
-				Text('Create your basic student account.'),
-				SizedBox(height: 16),
-				TextField(
-					decoration: InputDecoration(
-						labelText: 'Full name',
+				const Text('Account information'),
+				const SizedBox(height: 8),
+				const Text('Create your basic student account.'),
+				const SizedBox(height: 16),
+				TextFormField(
+					validator: validateUsername,
+					decoration: const InputDecoration(
+						labelText: 'Username',
 						prefixIcon: Icon(Icons.person_outline),
 						border: OutlineInputBorder(),
 					),
 				),
-				SizedBox(height: 16),
-				TextField(
+				const SizedBox(height: 16),
+				TextFormField(
 					keyboardType: TextInputType.emailAddress,
-					decoration: InputDecoration(
+					validator: validateEmail,
+					decoration: const InputDecoration(
 						labelText: 'Email',
 						prefixIcon: Icon(Icons.email_outlined),
 						border: OutlineInputBorder(),
 					),
 				),
-				SizedBox(height: 16),
-				TextField(
+				const SizedBox(height: 16),
+				TextFormField(
 					obscureText: true,
-					decoration: InputDecoration(
+					validator: validatePassword,
+					decoration: const InputDecoration(
 						labelText: 'Password',
 						prefixIcon: Icon(Icons.lock_outline),
 						border: OutlineInputBorder(),
