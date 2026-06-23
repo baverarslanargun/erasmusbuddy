@@ -29,6 +29,8 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   ];
   final List<String> _selectedCategories = [];
 
+  bool _isSubmitting = false;
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -41,7 +43,30 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   }
 
   void _onSubmit() {
+    if (!_formKey.currentState!.validate()) return;
     // TODO: call service to create travel idea
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      // Clear form
+      _titleController.clear();
+      _countryController.clear();
+      _citiesController.clear();
+      _durationController.clear();
+      _placesController.clear();
+      _noteController.clear();
+      setState(() => _selectedCategories.clear());
+
+      // Show success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Travel idea shared successfully!'),
+          backgroundColor: AppColors.secondary,
+        ),
+      );
+    });
   }
 
   @override
@@ -74,6 +99,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 decoration: const InputDecoration(
                   hintText: 'e.g. Budapest + Bratislava Weekend',
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Title is required'
+                    : null,
               ),
 
               const SizedBox(height: 20),
@@ -86,6 +114,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 decoration: const InputDecoration(
                   hintText: 'e.g. Hungary, Slovakia',
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Country is required'
+                    : null,
               ),
               const SizedBox(height: 20),
 
@@ -97,6 +128,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 decoration: const InputDecoration(
                   hintText: 'e.g. Bratislava, Budapest',
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'At least one city is required'
+                    : null,
               ),
 
               const SizedBox(height: 20),
@@ -106,6 +140,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _durationController,
                 decoration: const InputDecoration(hintText: 'e.g. 2-3 days'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Duration is required'
+                    : null,
               ),
               const SizedBox(height: 20),
 
@@ -114,32 +151,74 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _availableCategories.map((category) {
-                  final isSelected = _selectedCategories.contains(category);
-                  return FilterChip(
-                    label: Text(category),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          _selectedCategories.add(category);
-                        } else {
-                          _selectedCategories.remove(category);
-                        }
-                      });
+                children: [
+                  ..._availableCategories.map((category) {
+                    final isSelected = _selectedCategories.contains(category);
+                    return FilterChip(
+                      label: Text(category),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedCategories.add(category);
+                          } else {
+                            _selectedCategories.remove(category);
+                          }
+                        });
+                      },
+                      selectedColor: AppColors.primary.withValues(alpha: 0.15),
+                      checkmarkColor: AppColors.primary,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textSecondary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    );
+                  }),
+                  ActionChip(
+                    label: const Icon(Icons.add, size: 16),
+                    onPressed: () async {
+                      final controller = TextEditingController();
+                      final result = await showDialog<String>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Add Category'),
+                          content: TextField(
+                            controller: controller,
+                            autofocus: true,
+                            decoration: const InputDecoration(
+                              hintText: 'e.g. beach, winter, budget',
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel'),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.pop(
+                                context,
+                                controller.text.trim(),
+                              ),
+                              child: const Text('Add'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (result != null && result.isNotEmpty) {
+                        setState(() {
+                          if (!_availableCategories.contains(result)) {
+                            _availableCategories.add(result);
+                          }
+                          _selectedCategories.add(result);
+                        });
+                      }
                     },
-                    selectedColor: AppColors.primary.withValues(alpha: 0.15),
-                    checkmarkColor: AppColors.primary,
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.textSecondary,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                  );
-                }).toList(),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
 
@@ -153,6 +232,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                   hintText: 'e.g. Old Town, Bratislava Castle, Danube River',
                   alignLabelWithHint: true,
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Places to visit is required'
+                    : null,
               ),
 
               const SizedBox(height: 20),
@@ -173,11 +255,23 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               const SizedBox(height: 32),
 
               FilledButton.icon(
-                onPressed: _onSubmit,
-                icon: const Icon(Icons.send),
-                label: const Text(
-                  'Share Travel Idea',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                onPressed: _isSubmitting ? null : _onSubmit,
+                icon: _isSubmitting
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.surface,
+                        ),
+                      )
+                    : const Icon(Icons.send),
+                label: Text(
+                  _isSubmitting ? 'Sharing...' : 'Share Travel Idea',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
