@@ -29,8 +29,8 @@ class ErasmusBuddyApp extends StatelessWidget {
         TravelPlanListScreen.routeName: (context) =>
             const TravelPlanListScreen(),
         TravelPlanDetailScreen.routeName: (context) =>
-            TravelPlanDetailScreen(),
-        AddTravelPlanScreen.routeName: (context) => const AddTravelPlanScreen(),
+            const TravelPlanDetailScreen(),
+        AddTravelPlanScreen.routeName: (context) => AddTravelPlanScreen(),
       },
     );
   }
