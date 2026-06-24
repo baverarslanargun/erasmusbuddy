@@ -25,8 +25,6 @@ class TravelPlanDetailScreen extends StatelessWidget {
       createdAt: DateTime.now(),
     );
 
-    //bool isOwner = idea.createdBy == currentUserId;
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
