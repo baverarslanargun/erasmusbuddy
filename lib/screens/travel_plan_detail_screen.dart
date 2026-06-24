@@ -1,28 +1,5 @@
 import 'package:flutter/material.dart';
-
-class TravelPlan {
-  final String id;
-  final String creatorId;
-  final String title;
-  final List<String> countries;
-  final List<String> cities;
-  final String duration;
-  final List<String> placesToVisit;
-  final String note;
-  final String imageUrl;
-
-  TravelPlan({
-    this.id = '',
-    this.creatorId = '',
-    this.title = 'Nameless',
-    this.countries = const ['Unknown Country'],
-    this.cities = const [],
-    this.duration = 'Unknown Time',
-    this.placesToVisit = const [],
-    this.note = '',
-    this.imageUrl = 'https://placeholder.com/travel.jpg',
-  });
-}
+import 'package:erasmusbuddy/models/travel_idea.dart';
 
 class TravelPlanDetailScreen extends StatelessWidget {
   final String currentUserId = "user_123";
@@ -33,44 +10,32 @@ class TravelPlanDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    // try to get info from last page
     final args = ModalRoute.of(context)!.settings.arguments;
 
-    // initial
-    final TravelPlan plan = (args is TravelPlan)
+    final TravelIdea idea = (args is TravelIdea)
         ? args
-        : TravelPlan(
+        : TravelIdea(
       id: "test_1",
-      creatorId: "user_123",
-      title: "Budapest + Bratislava Weekend (Test Mode)",
-      countries: ["Hungary", "Slovenia"],
-      cities: ["Budapest", "Bratislava"],
+      createdBy: "Test User",
+      title: "Budapest + Bratislava Weekend",
+      destination: "Budapest, Bratislava, Hungary",
       duration: "2-3 days",
-      placesToVisit: ["Old Town", "Bratislava Castle", "Danube River", "Hungarian Parliament"],
-      note: "A perfect idea to spend time at the weekends. Don't forget to try local food!",
-      imageUrl: "https://picsum.photos/800/600",
+      budget: "150 EUR",
+      description: "A perfect idea to spend time at the weekends. Don't forget to try local food!",
+      createdAt: DateTime.now(),
     );
 
-    // bool isOwner = plan.creatorId == currentUserId;
+    bool isOwner = idea.createdBy == currentUserId;
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 300.0,
+            expandedHeight: 120.0,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(plan.title,
+              title: Text(idea.title,
                   style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18)),
-              background: plan.imageUrl.startsWith('http')
-                  ? Image.network(
-                plan.imageUrl,
-                fit: BoxFit.cover,
-                color: Colors.black.withValues(alpha: 0.3),
-                colorBlendMode: BlendMode.darken,
-              )
-                  : Container(color: Colors.grey),
             ),
           ),
           SliverList(
@@ -81,34 +46,67 @@ class TravelPlanDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: "Created by ",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
+                              TextSpan(
+                                text: idea.createdBy,
+                                style: const TextStyle(color: Colors.blue),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          idea.createdAt.toString().split(' ')[0],
+                          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                        ),
+                      ],
+                    ),
+
+                    const Divider(height: 30, thickness: 1),
+
+                    Row(
                       children: [
                         const Icon(Icons.location_on, color: Colors.blue),
                         const SizedBox(width: 5),
-                        Text("${plan.countries.join(", ")} • ${plan.cities.join(", ")}",
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        Expanded(
+                          child: Text(idea.destination,
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
+
                     Row(
                       children: [
                         const Icon(Icons.access_time, color: Colors.orange),
                         const SizedBox(width: 5),
-                        Text(plan.duration, style: const TextStyle(fontSize: 16)),
+                        Text(idea.duration, style: const TextStyle(fontSize: 16)),
                       ],
                     ),
-                    const Divider(height: 40),
-                    const Text("Places to Visit",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      children: plan.placesToVisit.map((place) => Chip(
-                        label: Text(place),
-                        backgroundColor: Colors.blue.shade50,
-                      )).toList(),
+                    const SizedBox(height: 12),
+
+                    Row(
+                      children: [
+                        const Icon(Icons.euro, color: Colors.green),
+                        const SizedBox(width: 5),
+                        Text("Budget: ${idea.budget}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      ],
                     ),
-                    const SizedBox(height: 30),
-                    const Text("Notes",
+
+                    const Divider(height: 40),
+
+                    const Text("Description",
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     Container(
@@ -120,7 +118,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
                         border: Border.all(color: Colors.grey.shade300),
                       ),
                       child: Text(
-                        plan.note,
+                        idea.description,
                         style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                       ),
                     ),
