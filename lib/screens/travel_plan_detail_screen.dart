@@ -75,7 +75,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.bookmark_border),
-                onPressed: () => print("Kaydedildi"),
+                onPressed: () => print("Saved"),
               ),
               if (isOwner) ...[
                 IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
@@ -144,7 +144,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
-        label: const Text("Planı Paylaş"),
+        label: const Text("Share Plan"),
         icon: const Icon(Icons.share),
       ),
     );
