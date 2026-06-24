@@ -4,7 +4,7 @@ class TravelPlan {
   final String id;
   final String creatorId;
   final String title;
-  final String country;
+  final List<String> countries;
   final List<String> cities;
   final String duration;
   final List<String> placesToVisit;
@@ -14,10 +14,10 @@ class TravelPlan {
   TravelPlan({
     this.id = '',
     this.creatorId = '',
-    this.title = 'İsimsiz Plan',
-    this.country = 'Belirtilmemiş Ülke',
+    this.title = 'Nameles',
+    this.countries = const ['Unknown Country'],
     this.cities = const [],
-    this.duration = 'Süre Belirtilmedi',
+    this.duration = 'Unknown Time',
     this.placesToVisit = const [],
     this.note = '',
     this.imageUrl = 'https://placeholder.com/travel.jpg',
@@ -44,7 +44,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
       id: "test_1",
       creatorId: "user_123",
       title: "Budapest + Bratislava Weekend (Test Mode)",
-      country: "Hungary",
+      countries: ["Hungary, Slovenia"],
       cities: ["Budapest", "Bratislava"],
       duration: "2-3 days",
       placesToVisit: ["Old Town", "Bratislava Castle", "Danube River", "Hungarian Parliament"],
@@ -94,7 +94,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.location_on, color: Colors.blue),
                         const SizedBox(width: 5),
-                        Text("${plan.country} • ${plan.cities.join(", ")}",
+                        Text("${plan.countries.join(", ")} • ${plan.cities.join(", ")}",
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                       ],
                     ),
