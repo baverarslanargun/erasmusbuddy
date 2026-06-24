@@ -14,34 +14,48 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _titleController = TextEditingController();
-  final _countryController = TextEditingController();
-  final _citiesController = TextEditingController();
+  final _destinationController = TextEditingController();
   final _durationController = TextEditingController();
-  final _placesController = TextEditingController();
-  final _noteController = TextEditingController();
+  final _budgetController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
-  final List<String> _availableCategories = [
-    'travel',
-    'history',
-    'food',
-    'nature',
-    'art',
-  ];
-  final List<String> _selectedCategories = [];
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
     _titleController.dispose();
-    _countryController.dispose();
-    _citiesController.dispose();
+    _destinationController.dispose();
     _durationController.dispose();
-    _placesController.dispose();
-    _noteController.dispose();
+    _budgetController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   void _onSubmit() {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
+
     // TODO: call service to create travel idea
+    Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+
+      // Clear form
+      _titleController.clear();
+      _destinationController.clear();
+      _durationController.clear();
+      _budgetController.clear();
+      _descriptionController.clear();
+
+      // Show success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Travel idea shared successfully!'),
+          backgroundColor: AppColors.secondary,
+        ),
+      );
+    });
   }
 
   @override
@@ -74,29 +88,24 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 decoration: const InputDecoration(
                   hintText: 'e.g. Budapest + Bratislava Weekend',
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Title is required'
+                    : null,
               ),
 
               const SizedBox(height: 20),
 
-              const _FieldLabel('Country'),
+              const _FieldLabel('Destination'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _countryController,
+                controller: _destinationController,
                 textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Hungary, Slovakia',
+                  hintText: 'e.g. Budapest, Hungary',
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              const _FieldLabel('Cities'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _citiesController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  hintText: 'e.g. Bratislava, Budapest',
-                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Destination is required'
+                    : null,
               ),
 
               const SizedBox(height: 20),
@@ -106,78 +115,61 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _durationController,
                 decoration: const InputDecoration(hintText: 'e.g. 2-3 days'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Duration is required'
+                    : null,
               ),
               const SizedBox(height: 20),
 
-              const _FieldLabel('Category'),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _availableCategories.map((category) {
-                  final isSelected = _selectedCategories.contains(category);
-                  return FilterChip(
-                    label: Text(category),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          _selectedCategories.add(category);
-                        } else {
-                          _selectedCategories.remove(category);
-                        }
-                      });
-                    },
-                    selectedColor: AppColors.primary.withValues(alpha: 0.15),
-                    checkmarkColor: AppColors.primary,
-                    labelStyle: TextStyle(
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.textSecondary,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-
-              const _FieldLabel('Places to Visit'),
+              const _FieldLabel('Budget'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _placesController,
-                maxLines: 3,
-                textCapitalization: TextCapitalization.sentences,
+                controller: _budgetController,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Old Town, Bratislava Castle, Danube River',
-                  alignLabelWithHint: true,
+                  hintText: 'e.g. Low, Medium, High or ~200€',
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Budget is required'
+                    : null,
               ),
-
               const SizedBox(height: 20),
 
-              const _FieldLabel('Note'),
+              const _FieldLabel('Description'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _noteController,
+                controller: _descriptionController,
                 maxLines: 4,
                 maxLength: 300,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                   hintText:
-                      'Share a short tip or personal note about this trip...',
+                      'Share places to visit, tips, and any personal notes...',
                   alignLabelWithHint: true,
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Description is required'
+                    : null,
               ),
               const SizedBox(height: 32),
 
               FilledButton.icon(
-                onPressed: _onSubmit,
-                icon: const Icon(Icons.send),
-                label: const Text(
-                  'Share Travel Idea',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                onPressed: _isSubmitting ? null : _onSubmit,
+                icon: _isSubmitting
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.surface,
+                        ),
+                      )
+                    : const Icon(Icons.send),
+                label: Text(
+                  _isSubmitting ? 'Sharing...' : 'Share Travel Idea',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
