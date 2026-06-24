@@ -1,6 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'core/theme/app_theme.dart';
+import 'firebase_options.dart';
 import 'screens/add_travel_plan_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
@@ -8,7 +11,15 @@ import 'screens/home_screen.dart';
 import 'screens/travel_plan_detail_screen.dart';
 import 'screens/travel_plan_list_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
   runApp(const ErasmusBuddyApp());
 }
 
