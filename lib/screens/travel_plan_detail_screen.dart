@@ -14,7 +14,7 @@ class TravelPlan {
   TravelPlan({
     this.id = '',
     this.creatorId = '',
-    this.title = 'Nameles',
+    this.title = 'Nameless',
     this.countries = const ['Unknown Country'],
     this.cities = const [],
     this.duration = 'Unknown Time',
@@ -44,7 +44,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
       id: "test_1",
       creatorId: "user_123",
       title: "Budapest + Bratislava Weekend (Test Mode)",
-      countries: ["Hungary, Slovenia"],
+      countries: ["Hungary", "Slovenia"],
       cities: ["Budapest", "Bratislava"],
       duration: "2-3 days",
       placesToVisit: ["Old Town", "Bratislava Castle", "Danube River", "Hungarian Parliament"],
@@ -72,16 +72,6 @@ class TravelPlanDetailScreen extends StatelessWidget {
               )
                   : Container(color: Colors.grey),
             ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.bookmark_border),
-                onPressed: () => print("Saved"),
-              ),
-              if (isOwner) ...[
-                IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.delete), onPressed: () {}),
-              ]
-            ],
           ),
           SliverList(
             delegate: SliverChildListDelegate([
@@ -141,11 +131,6 @@ class TravelPlanDetailScreen extends StatelessWidget {
             ]),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: const Text("Share Plan"),
-        icon: const Icon(Icons.share),
       ),
     );
   }
