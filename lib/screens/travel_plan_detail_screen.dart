@@ -52,7 +52,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
       imageUrl: "https://picsum.photos/800/600",
     );
 
-    bool isOwner = plan.creatorId == currentUserId;
+    // bool isOwner = plan.creatorId == currentUserId;
 
     return Scaffold(
       body: CustomScrollView(
@@ -67,7 +67,7 @@ class TravelPlanDetailScreen extends StatelessWidget {
                   ? Image.network(
                 plan.imageUrl,
                 fit: BoxFit.cover,
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 colorBlendMode: BlendMode.darken,
               )
                   : Container(color: Colors.grey),
