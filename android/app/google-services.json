@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "444229758295",
+    "project_id": "erasmusbuddy-2026",
+    "storage_bucket": "erasmusbuddy-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444229758295:android:e09716a885665aafb7e212",
+        "android_client_info": {
+          "package_name": "com.example.erasmusbuddy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5aPoUPJjKyp2atpCJ1PI0mMlru-puCYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
