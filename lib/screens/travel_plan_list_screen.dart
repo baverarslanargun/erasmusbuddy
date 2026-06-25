@@ -5,7 +5,7 @@ import '../core/theme/app_colors.dart';
 
 class TravelPlanListScreen extends StatelessWidget {
   const TravelPlanListScreen({super.key});
-
+  
   static final List<Map<String, String>> _placeholderIdeas = [
   {
     'title': 'Budapest + Bratislava Weekend',
