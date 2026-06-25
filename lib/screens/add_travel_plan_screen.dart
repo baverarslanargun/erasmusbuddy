@@ -141,7 +141,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _budgetController,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Low, Medium, High or ~200€',
+                  hintText: 'e.g. Low, Medium, High or ~EUR 200',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
                     ? 'Budget is required'
