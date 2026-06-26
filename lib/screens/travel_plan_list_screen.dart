@@ -28,6 +28,22 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Failed to load travel ideas.'),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => setState(() {}),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           final ideas = snapshot.data ?? [];
 
           if (ideas.isEmpty) {
