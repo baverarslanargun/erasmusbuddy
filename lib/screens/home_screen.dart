@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
 import 'add_travel_plan_screen.dart';
+import 'auth/login_screen.dart';
 import 'travel_plan_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,9 +14,50 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final currentUser = AuthService().currentUser;
+    final email = currentUser?.email ?? 'Student';
+    // Capitalize the first letter of the email username for a friendlier look
+    final displayName = email.split('@').first;
+    final capitalizedName = displayName.isNotEmpty
+        ? '${displayName[0].toUpperCase()}${displayName.substring(1)}'
+        : 'Student';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('ErasmusBuddy')),
+      appBar: AppBar(
+        title: const Text('ErasmusBuddy'),
+        actions: [
+          IconButton(
+            tooltip: 'Logout',
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm Logout'),
+                  content: const Text('Are you sure you want to log out of ErasmusBuddy?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                await AuthService().logout();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                }
+              }
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -23,12 +66,12 @@ class HomeScreen extends StatelessWidget {
             // ── Welcome Section ──
             const SizedBox(height: 8),
             Text(
-              'Welcome to ErasmusBuddy!',
+              'Welcome back, $capitalizedName!',
               style: theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
-              'Discover and share travel ideas with fellow Erasmus students.',
+              'Discover and share travel plan ideas with fellow Erasmus students.',
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 32),
@@ -37,7 +80,7 @@ class HomeScreen extends StatelessWidget {
             _NavigationCard(
               icon: Icons.explore_outlined,
               title: 'Explore Travel Ideas',
-              subtitle: 'Browse travel plans shared by other students',
+              subtitle: 'Browse travel plan ideas shared by other students',
               backgroundColor: colorScheme.primaryContainer,
               iconColor: colorScheme.onPrimaryContainer,
               onTap: () {
@@ -48,7 +91,7 @@ class HomeScreen extends StatelessWidget {
             _NavigationCard(
               icon: Icons.add_circle_outline,
               title: 'Add Travel Idea',
-              subtitle: 'Create and share your own travel plan',
+              subtitle: 'Create and share your own travel plan ideas',
               backgroundColor: colorScheme.secondaryContainer,
               iconColor: colorScheme.onSecondaryContainer,
               onTap: () {
