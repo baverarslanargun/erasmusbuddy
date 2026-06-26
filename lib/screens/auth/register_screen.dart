@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import '../home_screen.dart';
 import 'login_screen.dart';
 
@@ -14,21 +16,65 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
 	final formKey = GlobalKey<FormState>();
-	int step = 0;
+	final _authService = AuthService();
 
-	void nextStep() {
+	int step = 0;
+	String email = '';
+	String password = '';
+	bool isLoading = false;
+
+	Future<void> nextStep() async {
 		if (!(formKey.currentState?.validate() ?? false)) {
 			return;
 		}
 
 		if (step < 2) {
+			formKey.currentState?.save();
 			setState(() {
 				step++;
 			});
 			return;
 		}
 
-		Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+		await register();
+	}
+
+	Future<void> register() async {
+		setState(() {
+			isLoading = true;
+		});
+
+		try {
+			await _authService.register(email, password);
+
+			if (!mounted) {
+				return;
+			}
+
+			Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+		} on FirebaseAuthException catch (error) {
+			if (!mounted) {
+				return;
+			}
+
+			ScaffoldMessenger.of(context).showSnackBar(
+				SnackBar(content: Text(error.message ?? 'Registration failed')),
+			);
+		} catch (_) {
+			if (!mounted) {
+				return;
+			}
+
+			ScaffoldMessenger.of(context).showSnackBar(
+				const SnackBar(content: Text('Registration failed')),
+			);
+		} finally {
+			if (mounted) {
+				setState(() {
+					isLoading = false;
+				});
+			}
+		}
 	}
 
 	void previousStep() {
@@ -70,15 +116,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 							children: [
 								Expanded(
 									child: OutlinedButton(
-										onPressed: previousStep,
+										onPressed: isLoading ? null : previousStep,
 										child: Text(step == 0 ? 'Login' : 'Back'),
 									),
 								),
 								const SizedBox(width: 12),
 								Expanded(
 									child: FilledButton(
-										onPressed: nextStep,
-										child: Text(step == 2 ? 'Create account' : 'Next'),
+										onPressed: isLoading ? null : nextStep,
+										child: isLoading
+											? const SizedBox(
+												height: 16,
+												width: 16,
+												child: CircularProgressIndicator(strokeWidth: 2),
+											)
+											: Text(step == 2 ? 'Create account' : 'Next'),
 									),
 								),
 							],
@@ -91,7 +143,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 	Widget currentStepContent() {
 		if (step == 0) {
-			return const AccountStep();
+			return AccountStep(
+				onSavedEmail: (value) {
+					email = value;
+				},
+				onSavedPassword: (value) {
+					password = value;
+				},
+			);
 		}
 
 		if (step == 1) {
@@ -103,7 +162,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 }
 
 class AccountStep extends StatefulWidget {
-	const AccountStep({super.key});
+	const AccountStep({
+		super.key,
+		required this.onSavedEmail,
+		required this.onSavedPassword,
+	});
+
+	final ValueChanged<String> onSavedEmail;
+	final ValueChanged<String> onSavedPassword;
 
 	@override
 	State<AccountStep> createState() => _AccountStepState();
@@ -201,6 +267,9 @@ class _AccountStepState extends State<AccountStep> {
 				TextFormField(
 					keyboardType: TextInputType.emailAddress,
 					validator: validateEmail,
+					onSaved: (value) {
+						widget.onSavedEmail(value?.trim() ?? '');
+					},
 					decoration: const InputDecoration(
 						labelText: 'Email',
 						prefixIcon: Icon(Icons.email_outlined),
@@ -212,6 +281,9 @@ class _AccountStepState extends State<AccountStep> {
 					controller: passwordController,
 					obscureText: !showPassword,
 					validator: validatePassword,
+					onSaved: (value) {
+						widget.onSavedPassword(value ?? '');
+					},
 					decoration: InputDecoration(
 						labelText: 'Password',
 						prefixIcon: const Icon(Icons.lock_outline),
