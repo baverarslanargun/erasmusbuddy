@@ -3,11 +3,11 @@ import 'package:erasmusbuddy/models/travel_idea.dart';
 
 class TravelIdeaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static const String _collectionName = 'travel_ideas';
+  static const String _collectionName = 'travelIdeas';
 
   Future<void> createTravelIdea(TravelIdea idea) async {
     try {
-      await _firestore.collection(_collectionName).doc(idea.id).set(idea.toMap());
+      await _firestore.collection(_collectionName).add(idea.toMap());
     } catch (e) {
       throw Exception('Failed to create travel idea: $e');
     }
