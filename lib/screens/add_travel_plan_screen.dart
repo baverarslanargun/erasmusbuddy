@@ -229,8 +229,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Old Town, Bratislava Castle, Danube River',
-                  alignLabelWithHint: true,
+                  hintText: 'e.g. Low, Medium, High or ~EUR 200',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
                     ? 'Places to visit is required'
