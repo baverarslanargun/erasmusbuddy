@@ -49,9 +49,19 @@ class HomeScreen extends StatelessWidget {
               );
 
               if (confirm == true) {
-                await AuthService().logout();
-                if (context.mounted) {
-                  Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                try {
+                  await AuthService().logout();
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                  }
+                } catch (error) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Logout failed: ${error.toString()}'),
+                      ),
+                    );
+                  }
                 }
               }
             },
