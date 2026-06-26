@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../models/travel_idea.dart';
 
 class AddTravelPlanScreen extends StatefulWidget {
   const AddTravelPlanScreen({super.key});
@@ -14,37 +15,42 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _titleController = TextEditingController();
-  final _countryController = TextEditingController();
-  final _citiesController = TextEditingController();
+  final _destinationController = TextEditingController();
   final _durationController = TextEditingController();
-  final _placesController = TextEditingController();
-  final _noteController = TextEditingController();
-
-  final List<String> _availableCategories = [
-    'travel',
-    'history',
-    'food',
-    'nature',
-    'art',
-  ];
-  final List<String> _selectedCategories = [];
+  final _budgetController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   bool _isSubmitting = false;
 
   @override
   void dispose() {
     _titleController.dispose();
-    _countryController.dispose();
-    _citiesController.dispose();
+    _destinationController.dispose();
     _durationController.dispose();
-    _placesController.dispose();
-    _noteController.dispose();
+    _budgetController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   void _onSubmit() {
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
+
     // TODO: call service to create travel idea
+
+    final travelIdea = TravelIdea(
+      id: '',
+      title: _titleController.text.trim(),
+      destination: _destinationController.text.trim(),
+      duration: _durationController.text.trim(),
+      budget: _budgetController.text.trim(),
+      description: _descriptionController.text.trim(),
+      createdBy: 'anonymous',
+      createdAt: DateTime.now(),
+    );
+
+    debugPrint('TravelIdea built: ${travelIdea.toMap()}');
 
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
@@ -52,12 +58,10 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 
       // Clear form
       _titleController.clear();
-      _countryController.clear();
-      _citiesController.clear();
+      _destinationController.clear();
       _durationController.clear();
-      _placesController.clear();
-      _noteController.clear();
-      setState(() => _selectedCategories.clear());
+      _budgetController.clear();
+      _descriptionController.clear();
 
       // Show success
       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,30 +110,16 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 
               const SizedBox(height: 20),
 
-              const _FieldLabel('Country'),
+              const _FieldLabel('Destination'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _countryController,
+                controller: _destinationController,
                 textCapitalization: TextCapitalization.words,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Hungary, Slovakia',
+                  hintText: 'e.g. Budapest, Hungary',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Country is required'
-                    : null,
-              ),
-              const SizedBox(height: 20),
-
-              const _FieldLabel('Cities'),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _citiesController,
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  hintText: 'e.g. Bratislava, Budapest',
-                ),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'At least one city is required'
+                    ? 'Destination is required'
                     : null,
               ),
 
@@ -146,110 +136,34 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               ),
               const SizedBox(height: 20),
 
-              const _FieldLabel('Category'),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  ..._availableCategories.map((category) {
-                    final isSelected = _selectedCategories.contains(category);
-                    return FilterChip(
-                      label: Text(category),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedCategories.add(category);
-                          } else {
-                            _selectedCategories.remove(category);
-                          }
-                        });
-                      },
-                      selectedColor: AppColors.primary.withValues(alpha: 0.15),
-                      checkmarkColor: AppColors.primary,
-                      labelStyle: TextStyle(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.normal,
-                      ),
-                    );
-                  }),
-                  ActionChip(
-                    label: const Icon(Icons.add, size: 16),
-                    onPressed: () async {
-                      final controller = TextEditingController();
-                      final result = await showDialog<String>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Add Category'),
-                          content: TextField(
-                            controller: controller,
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                              hintText: 'e.g. beach, winter, budget',
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
-                            ),
-                            FilledButton(
-                              onPressed: () => Navigator.pop(
-                                context,
-                                controller.text.trim(),
-                              ),
-                              child: const Text('Add'),
-                            ),
-                          ],
-                        ),
-                      );
-                      if (result != null && result.isNotEmpty) {
-                        setState(() {
-                          if (!_availableCategories.contains(result)) {
-                            _availableCategories.add(result);
-                          }
-                          _selectedCategories.add(result);
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              const _FieldLabel('Places to Visit'),
+              const _FieldLabel('Budget'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _placesController,
-                maxLines: 3,
-                textCapitalization: TextCapitalization.sentences,
+                controller: _budgetController,
                 decoration: const InputDecoration(
                   hintText: 'e.g. Low, Medium, High or ~EUR 200',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Places to visit is required'
+                    ? 'Budget is required'
                     : null,
               ),
-
               const SizedBox(height: 20),
 
-              const _FieldLabel('Note'),
+              const _FieldLabel('Description'),
               const SizedBox(height: 8),
               TextFormField(
-                controller: _noteController,
+                controller: _descriptionController,
                 maxLines: 4,
                 maxLength: 300,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                   hintText:
-                      'Share a short tip or personal note about this trip...',
+                  'Share places to visit, tips, and any personal notes...',
                   alignLabelWithHint: true,
                 ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Description is required'
+                    : null,
               ),
               const SizedBox(height: 32),
 
@@ -257,13 +171,13 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 onPressed: _isSubmitting ? null : _onSubmit,
                 icon: _isSubmitting
                     ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.surface,
-                        ),
-                      )
+                  height: 16,
+                  width: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.surface,
+                  ),
+                )
                     : const Icon(Icons.send),
                 label: Text(
                   _isSubmitting ? 'Sharing...' : 'Share Travel Idea',
