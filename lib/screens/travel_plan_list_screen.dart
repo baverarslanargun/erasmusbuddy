@@ -57,7 +57,7 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
               final idea = ideas[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, TravelPlanDetailScreen.routeName);
+                  Navigator.pushNamed(context, TravelPlanDetailScreen.routeName, arguments: idea.id);
                 },
                 child: Card(
                   margin: const EdgeInsets.only(bottom: 12),
