@@ -158,7 +158,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 textCapitalization: TextCapitalization.sentences,
                 decoration: const InputDecoration(
                   hintText:
-                    'Share places to visit, tips, and any personal notes...',
+                      'Share places to visit, tips, and any personal notes...',
                   alignLabelWithHint: true,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
@@ -171,13 +171,13 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 onPressed: _isSubmitting ? null : _onSubmit,
                 icon: _isSubmitting
                     ? const SizedBox(
-                    height: 16,
-                    width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.surface,
-                    ),
-                  )
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.surface,
+                        ),
+                      )
                     : const Icon(Icons.send),
                 label: Text(
                   _isSubmitting ? 'Sharing...' : 'Share Travel Idea',
