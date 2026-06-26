@@ -19,7 +19,17 @@ A travel plan idea includes:
 - Places to visit
 - Short note or description
 
+## Features
+
+- Register and log in with email & password
+- Browse travel plan ideas shared by other students
+- View travel plan details (destination, duration, budget, description)
+- Create and share a new travel plan idea
+- Explore ideas by scrolling through the list
+- Logout from the app
+
 ## What This App Does Not Do
+
 - It does not create routes automatically.
 - It does not provide live navigation.
 - It does not find flight, train, or bus tickets.
@@ -33,7 +43,9 @@ A travel plan idea includes:
 ### Prerequisites
 1. Install [Flutter SDK](https://docs.flutter.dev/get-started/install) (compatible with SDK version `^3.10.4`).
 2. Install [Git](https://git-scm.com/downloads).
-3. Set up an Android emulator, iOS simulator, physical device, or Windows environment.
+3. Set up an Android emulator or physical Android device.
+
+> **Note:** Firebase is already pre-configured for Android. No additional Firebase setup is required to run the app.
 
 ### Setup and Running
 1. **Clone the repository:**
@@ -86,3 +98,15 @@ The following folders must not be committed to the repository (ensure they are i
 - `.dart_tool/`
 - `build/`
 - `windows/flutter/ephemeral/`
+
+---
+
+## Team Members
+
+| Name |
+|------|--------|
+| Umut Tuncer | 
+| Baver Arslanargun | 
+| Poyraz Erdoğan |
+| Berhan Kemal | 
+| Natoli Hunduma Legesse |
