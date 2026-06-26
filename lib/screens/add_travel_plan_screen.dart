@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
+import '../models/travel_idea.dart';
 
 class AddTravelPlanScreen extends StatefulWidget {
   const AddTravelPlanScreen({super.key});
@@ -37,6 +38,20 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
     setState(() => _isSubmitting = true);
 
     // TODO: call service to create travel idea
+
+    final travelIdea = TravelIdea(
+      id: '',
+      title: _titleController.text.trim(),
+      destination: _destinationController.text.trim(),
+      duration: _durationController.text.trim(),
+      budget: _budgetController.text.trim(),
+      description: _descriptionController.text.trim(),
+      createdBy: 'anonymous',
+      createdAt: DateTime.now(),
+    );
+
+    debugPrint('TravelIdea built: ${travelIdea.toMap()}');
+
     Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
@@ -126,7 +141,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _budgetController,
                 decoration: const InputDecoration(
-                  hintText: 'e.g. Low, Medium, High or ~200€',
+                  hintText: 'e.g. Low, Medium, High or ~EUR 200',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
                     ? 'Budget is required'
