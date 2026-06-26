@@ -7,7 +7,11 @@ class TravelIdeaService {
 
   Future<void> createTravelIdea(TravelIdea idea) async {
     try {
-      await _firestore.collection(_collectionName).add(idea.toMap());
+      final docRef = _firestore.collection(_collectionName).doc();
+      final data = idea.toMap();
+      data['id'] = docRef.id;
+
+      await docRef.set(data);
     } catch (e) {
       throw Exception('Failed to create travel idea: $e');
     }
@@ -19,7 +23,11 @@ class TravelIdeaService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => TravelIdea.fromMap(doc.data()))
+          .map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            return TravelIdea.fromMap(data);
+          })
           .toList();
     });
   }
@@ -28,7 +36,9 @@ class TravelIdeaService {
     try {
       final doc = await _firestore.collection(_collectionName).doc(id).get();
       if (doc.exists) {
-        return TravelIdea.fromMap(doc.data() as Map<String, dynamic>);
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return TravelIdea.fromMap(data);
       }
       return null;
     } catch (e) {
