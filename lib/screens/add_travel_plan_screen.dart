@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../models/travel_idea.dart';
+import '../services/auth_service.dart';
+import '../services/travel_idea_service.dart';
 
 class AddTravelPlanScreen extends StatefulWidget {
   const AddTravelPlanScreen({super.key});
@@ -13,6 +15,8 @@ class AddTravelPlanScreen extends StatefulWidget {
 
 class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   final _formKey = GlobalKey<FormState>();
+	final _authService = AuthService();
+	final _travelIdeaService = TravelIdeaService();
 
   final _titleController = TextEditingController();
   final _destinationController = TextEditingController();
@@ -32,46 +36,52 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
     super.dispose();
   }
 
-  void _onSubmit() {
-    if (!_formKey.currentState!.validate()) return;
+	Future<void> _onSubmit() async {
+		if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSubmitting = true);
+		setState(() => _isSubmitting = true);
 
-    // TODO: call service to create travel idea
+		final currentUser = _authService.currentUser;
+		final travelIdea = TravelIdea(
+			id: '',
+			title: _titleController.text.trim(),
+			destination: _destinationController.text.trim(),
+			duration: _durationController.text.trim(),
+			budget: _budgetController.text.trim(),
+			description: _descriptionController.text.trim(),
+			createdBy: currentUser?.email ?? currentUser?.uid ?? 'anonymous',
+			createdAt: DateTime.now(),
+		);
 
-    final travelIdea = TravelIdea(
-      id: '',
-      title: _titleController.text.trim(),
-      destination: _destinationController.text.trim(),
-      duration: _durationController.text.trim(),
-      budget: _budgetController.text.trim(),
-      description: _descriptionController.text.trim(),
-      createdBy: 'anonymous',
-      createdAt: DateTime.now(),
-    );
+		try {
+			await _travelIdeaService.createTravelIdea(travelIdea);
 
-    debugPrint('TravelIdea built: ${travelIdea.toMap()}');
+			if (!mounted) return;
 
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() => _isSubmitting = false);
+			_titleController.clear();
+			_destinationController.clear();
+			_durationController.clear();
+			_budgetController.clear();
+			_descriptionController.clear();
 
-      // Clear form
-      _titleController.clear();
-      _destinationController.clear();
-      _durationController.clear();
-      _budgetController.clear();
-      _descriptionController.clear();
+			ScaffoldMessenger.of(context).showSnackBar(
+				const SnackBar(
+					content: Text('Travel idea shared successfully!'),
+					backgroundColor: AppColors.secondary,
+				),
+			);
+		} catch (_) {
+			if (!mounted) return;
 
-      // Show success
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Travel idea shared successfully!'),
-          backgroundColor: AppColors.secondary,
-        ),
-      );
-    });
-  }
+			ScaffoldMessenger.of(context).showSnackBar(
+				const SnackBar(content: Text('Failed to share travel idea.')),
+			);
+		} finally {
+			if (mounted) {
+				setState(() => _isSubmitting = false);
+			}
+		}
+	}
 
   @override
   Widget build(BuildContext context) {
