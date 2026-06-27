@@ -77,8 +77,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final currentUser = AuthService().currentUser;
-    final email = currentUser?.email ?? 'Student';
     final displayName = currentUser?.displayName ?? email.split('@').first;
     final capitalizedName = displayName.isNotEmpty
         ? '${displayName[0].toUpperCase()}${displayName.substring(1)}'
