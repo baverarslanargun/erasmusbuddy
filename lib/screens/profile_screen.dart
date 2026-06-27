@@ -86,6 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final colorScheme = theme.colorScheme;
     final user = _auth.currentUser;
     final email = user?.email ?? 'No email';
+    final userId = user?.uid ?? '';
     final defaultName = email.split('@').first;
     final capitalizedDefaultName = defaultName.isNotEmpty
         ? '${defaultName[0].toUpperCase()}${defaultName.substring(1)}'
@@ -248,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             StreamBuilder<QuerySnapshot>(
               stream: _firestore
                   .collection('travelIdeas')
-                  .where('createdBy', isEqualTo: email)
+                  .where('createdBy', isEqualTo: userId)
                   .snapshots(),
               builder: (context, snapshot) {
                 final myIdeasCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
@@ -295,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             StreamBuilder<QuerySnapshot>(
               stream: _firestore
                   .collection('travelIdeas')
-                  .where('createdBy', isEqualTo: email)
+                  .where('createdBy', isEqualTo: userId)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
