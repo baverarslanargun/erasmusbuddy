@@ -49,7 +49,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 			duration: _durationController.text.trim(),
 			budget: _budgetController.text.trim(),
 			description: _descriptionController.text.trim(),
-			createdBy: currentUser?.email ?? currentUser?.uid ?? 'anonymous',
+			createdBy: currentUser?.uid ?? 'anonymous',
 			createdAt: DateTime.now(),
 		);
 

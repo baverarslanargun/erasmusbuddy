@@ -205,7 +205,7 @@ class HomeScreen extends StatelessWidget {
                 final totalIdeasCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
                 final myIdeasCount = snapshot.hasData
                     ? snapshot.data!.docs
-                        .where((doc) => doc.get('createdBy') == (currentUser?.email ?? ''))
+                        .where((doc) => doc.get('createdBy') == (currentUser?.uid ?? ''))
                         .length
                     : 0;
 
