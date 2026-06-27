@@ -102,9 +102,13 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
                               color: AppColors.secondary,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              idea.duration,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            Expanded(
+                              child: Text(
+                                idea.duration,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),

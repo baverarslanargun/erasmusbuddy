@@ -97,8 +97,16 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                 expandedHeight: 120.0,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(idea.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18)),
+                  title: Text(
+                    idea.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
               SliverList(
@@ -111,24 +119,29 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            RichText(
-                              text: TextSpan(
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: RichText(
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  children: [
+                                    const TextSpan(
+                                      text: "Created by ",
+                                      style: TextStyle(color: Colors.blueGrey),
+                                    ),
+                                    TextSpan(
+                                      text: idea.createdBy,
+                                      style: const TextStyle(color: Colors.blue),
+                                    ),
+                                  ],
                                 ),
-                                children: [
-                                  const TextSpan(
-                                    text: "Created by ",
-                                    style: TextStyle(color: Colors.blueGrey),
-                                  ),
-                                  TextSpan(
-                                    text: idea.createdBy,
-                                    style: const TextStyle(color: Colors.blue),
-                                  ),
-                                ],
                               ),
                             ),
+                            const SizedBox(width: 8),
                             Text(
                               idea.createdAt.toString().split(' ')[0],
                               style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
@@ -154,7 +167,12 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                           children: [
                             const Icon(Icons.access_time, color: Colors.orange),
                             const SizedBox(width: 5),
-                            Text(idea.duration, style: const TextStyle(fontSize: 16)),
+                            Expanded(
+                              child: Text(
+                                idea.duration,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -163,7 +181,15 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                           children: [
                             const Icon(Icons.euro, color: Colors.green),
                             const SizedBox(width: 5),
-                            Text("Budget: ${idea.budget}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                            Expanded(
+                              child: Text(
+                                "Budget: ${idea.budget}",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
 

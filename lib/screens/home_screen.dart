@@ -15,12 +15,13 @@ class HomeScreen extends StatelessWidget {
   void _showErasmusTipsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
         return SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -78,6 +79,8 @@ class HomeScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final currentUser = AuthService().currentUser;
     final email = currentUser?.email ?? '';
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final gridAspectRatio = textScale > 1.2 ? 0.8 : 1.15;
     final displayName = currentUser?.displayName ?? email.split('@').first;
     final capitalizedName = displayName.isNotEmpty
         ? '${displayName[0].toUpperCase()}${displayName.substring(1)}'
@@ -250,7 +253,7 @@ class HomeScreen extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 1.15,
+              childAspectRatio: gridAspectRatio,
               children: [
                 _GridNavigationCard(
                   icon: Icons.explore_outlined,
@@ -400,6 +403,8 @@ class _GridNavigationCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
