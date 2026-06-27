@@ -1,73 +1,76 @@
-# Demo Script - ErasmusBuddy Walkthrough
+# Demo Script
 
-This document outlines the step-by-step user journey script for demonstrating the core user flows of the ErasmusBuddy mobile application.
+## Before the Demo
 
----
+1. Connect the Android device to the internet.
+2. Confirm that Email/Password login is enabled in Firebase Authentication.
+3. Confirm that Firestore allows the required authenticated reads and writes.
+4. Run the Android application.
 
-## Demo Step-by-Step Flow
+## 1. Register
 
-### 1. Register a New Account
-- **Initial State:** App starts on the **Login Screen**.
-- **Action:**
-  1. Tap the **Register** link (or "Don't have an account? Sign up") to navigate to the **Register Screen**.
-  2. Enter a new student email address (e.g., `student@test.com`).
-  3. Enter a password (minimum 6 characters, e.g., `password123`).
-  4. Confirm the password by typing it again.
-  5. Tap the **Register** button.
-- **Expected Outcome:** User account is created in Firebase Auth and the user is automatically logged in and redirected to the **Home Screen**.
+1. Open the Login screen.
+2. Tap `Create an account`.
+3. Enter a username, email, password, and password confirmation.
+4. Continue through the Erasmus information and travel interests steps.
+5. Tap `Create account`.
 
-### 2. View the Home Screen
-- **Action:** Browse the Home Screen modules.
-- **Expected Outcome:**
-  - The top bar displays the application title: **ErasmusBuddy**.
-  - A friendly welcome section displays "Welcome back, Student" (extracting the display name or email prefix).
-  - Quick statistics blocks update dynamically showing:
-    - **Total Ideas:** Count of all travel ideas in Firestore.
-    - **My Shared Plans:** Count of plans created by the logged-in email.
-  - A 2x2 grid of **Quick Actions** cards:
-    - *Explore Ideas*
-    - *Add Travel Idea*
-    - *My Profile*
-    - *Erasmus Guide*
+Expected result: Firebase creates the account and the Home screen opens.
 
-### 3. Browse Travel Plan Ideas
-- **Action:**
-  1. From the Quick Actions grid, tap **Explore Ideas** (or use the navigation cards).
-  2. Scroll through the feed of travel plan ideas.
-  3. Use the search input box at the top to filter ideas by destination or title.
-- **Expected Outcome:** The page displays a clean, scrollable list of travel cards. Results filter in real-time as search text changes.
+Only the email and password are currently used to create the Firebase account. The additional registration fields are part of the current UI and are not stored by the MVP.
 
-### 4. Open Travel Plan Details
-- **Action:**
-  1. Tap on any travel plan item from the list.
-  2. Read the full specifications: Title, Destination, Duration, Budget, Places to visit, and description notes.
-  3. Tap the **Back Arrow** button in the AppBar to return to the list.
-- **Expected Outcome:** Details load immediately and display nicely inside card compartments. Returning to the list restores search state.
+## 2. Logout and Login
 
-### 5. Add a New Travel Idea
-- **Action:**
-  1. Go to the Home Screen and tap **Add Travel Idea** from the Quick Actions grid.
-  2. Fill out the form fields:
-     - **Title:** `Roadtrip in Portugal`
-     - **Destination:** `Portugal`
-     - **Cities:** `Lisbon, Porto, Sintra`
-     - **Duration:** `7 Days`
-     - **Budget:** `300 EUR`
-     - **Places to Visit:** `Belem Tower, Luis I Bridge, Pena Palace`
-     - **Description:** `Amazing budget trip for Erasmus students! Highly recommended to try pastel de nata in Lisbon.`
-  3. Click **Submit Idea**.
-- **Expected Outcome:** The travel plan is validated, mapped to a `TravelIdea` object, written to Cloud Firestore, and the page pops back to the previous screen.
+1. Tap the Logout icon on the Home screen.
+2. Confirm logout.
+3. Enter the registered email and password.
+4. Tap `Login`.
 
-### 6. Verify Statistics and View Profile
-- **Action:**
-  1. Go to the Home Screen.
-  2. Verify that **Total Ideas** and **My Shared Plans** metrics have incremented.
-  3. Tap **My Profile** from the Quick Actions grid or use the Profile Icon in the top AppBar.
-- **Expected Outcome:** The **Profile Screen** displays your user email, how many plans you have shared, and a list of your specific shared travel plan ideas.
+Expected result: The Home screen opens for the authenticated user.
 
-### 7. Log Out
-- **Action:**
-  1. Return to the Home Screen.
-  2. Tap the **Logout** icon (exit door symbol) in the top-right corner of the AppBar.
-  3. Confirm the action in the pop-up confirmation dialog by tapping **Logout**.
-- **Expected Outcome:** The user session is cleared, and the app safely redirects back to the **Login Screen**.
+## 3. Add a Travel Idea
+
+1. Tap `Add Travel Idea`.
+2. Enter a title.
+3. Enter a destination.
+4. Enter a duration.
+5. Enter a budget.
+6. Enter a description.
+7. Tap `Share Travel Idea`.
+
+Expected result: A success message appears after Firestore saves the idea, and the form fields are cleared.
+
+## 4. Explore Travel Ideas
+
+1. Return to the Home screen.
+2. Tap `Explore Ideas`.
+3. Find the newly added travel idea in the list.
+
+Expected result: Firestore travel ideas appear in a scrollable list.
+
+## 5. View Details
+
+1. Tap a travel idea card.
+2. Review its title, destination, duration, budget, description, creator ID, and date.
+3. Return to the previous screen.
+
+Expected result: The selected Firestore document is displayed on the detail screen.
+
+## 6. View Profile
+
+1. Open `My Profile`.
+2. Review the display name, email, shared idea count, and personal travel idea list.
+3. Open one of the listed travel ideas.
+
+Expected result: The profile uses the authenticated user ID to show that user's travel ideas.
+
+## 7. Final Logout
+
+1. Tap the Logout icon.
+2. Confirm logout.
+
+Expected result: The session ends and the Login screen opens.
+
+## Backup Plan
+
+If Firebase is temporarily unavailable, show the already installed application and explain that Authentication and Firestore require an internet connection. Do not use real personal information in demo accounts.

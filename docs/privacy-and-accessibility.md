@@ -1,43 +1,43 @@
-# Privacy and Accessibility - ErasmusBuddy
+# Privacy and Accessibility
 
-This document details data storage patterns, GDPR and privacy guidelines, data security precautions, and accessibility considerations implemented in the ErasmusBuddy mobile application.
+## Stored Data
 
----
+ErasmusBuddy uses Firebase Authentication and Cloud Firestore.
 
-## 1. Stored Data and Privacy Guidelines
+Firebase Authentication manages:
 
-ErasmusBuddy prioritizes user privacy. The application stores only the essential details necessary to support core travel plan sharing features.
+- User email addresses
+- Password-based authentication
+- Login sessions
+- Firebase user IDs
 
-### 1.1 Data Categories
-The app interacts with two main types of user-related data:
+Passwords are handled by Firebase Authentication. The application does not store passwords in Firestore or local files.
 
-1. **Authentication Data (Firebase Authentication):**
-   - **Fields Stored:** Email address and encrypted password hashes.
-   - **Purpose:** Identifies the user, tracks active sessions, and registers new student accounts.
-   - **Storage:** Securely managed by Firebase Infrastructure. Passwords are never stored in plaintext on our end or inside client logs.
+Each travel idea document contains:
 
-2. **Travel Plan Ideas (Cloud Firestore):**
-   - **Fields Stored:** Title, Country, Cities, Duration, Budget, Places to visit, Creator Email (`createdBy`), and Creation Timestamp (`createdAt`).
-   - **Purpose:** Public travel inspiration ideas shared by students for other students.
-   - **Storage:** Stored in the `travelIdeas` NoSQL collection.
+- Document ID
+- Title
+- Destination
+- Description
+- Duration
+- Budget
+- Creator user ID
+- Creation date
 
-### 1.2 GDPR & User Control
-- **Data Access & Portability:** Users can view all of their shared plans and check their personal statistics on the **My Profile** screen.
-- **Session Control:** Users can securely terminate their session at any time by tapping the **Logout** button on the Home Screen.
-- **Minimal Collection:** No sensitive metadata (such as device MAC address, phone contacts, exact GPS locations, or cookies) is collected.
+The application does not collect GPS location, contacts, payment details, or transportation data.
 
----
+## Privacy Notes
 
-## 2. Accessibility Considerations
+ErasmusBuddy is a student MVP. Only data needed for authentication and sharing travel ideas should be collected.
 
-To ensure the application remains usable for a diverse set of students, the frontend adheres to the following accessibility patterns:
+Before the final demo, Firestore security rules should be checked so that access matches the intended authenticated user flow. Test accounts and travel ideas should not contain real private or sensitive information.
 
-### 2.1 Visual Design and Typography
-- **Contrast Ratios:** Backgrounds and container colors use accessible pastel and high-contrast palettes (such as indigo/emerald background accents with bold, high-contrast colored text labels).
-- **Text Scaling:** Custom widgets use Material Design text styles (like `headlineSmall`, `titleLarge`, `bodyMedium`) that respect default Android and iOS system font scaling settings.
-- **Scrollability:** Screens with a lot of contents are wrapped inside `SingleChildScrollView` to prevent layout overflows and rendering clipping when font scaling is active.
+The current MVP does not include in-app account deletion, data export, or travel idea deletion. These limitations should be stated clearly during evaluation. Test data can be removed through Firebase Console.
 
-### 2.2 Semantic Elements & Screen Readers
-- **Semantics:** Employs standard Flutter widgets (like `FilledButton`, `TextButton`, `IconButton`) which automatically translate into native accessibility nodes for screen readers (such as Google TalkBack or Apple VoiceOver).
-- **Tooltips:** All action buttons in the AppBar (like the Profile and Logout buttons) have descriptive `tooltip` properties set (e.g. `tooltip: 'My Profile'`), enabling screen readers to read the actions aloud.
-- **Input Labels:** Custom text inputs use floating label texts and validator placeholders to clearly declare expectations to assistive technologies.
+## Accessibility
+
+The interface uses standard Flutter Material widgets, including labeled form fields, buttons, progress indicators, and AppBar tooltips. These widgets provide basic support for Android accessibility services.
+
+Long forms and content screens use scrollable layouts to reduce overflow on smaller devices. Text fields include labels or hints, and validation messages explain missing input.
+
+The project has not completed a formal accessibility audit. Before the demo, the team should check text scaling, color contrast, keyboard visibility, and screen reader labels on the Android test device.
