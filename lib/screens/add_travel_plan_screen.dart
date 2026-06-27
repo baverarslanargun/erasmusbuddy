@@ -141,6 +141,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _durationController,
+                maxLength: 50,
                 decoration: const InputDecoration(hintText: 'e.g. 2-3 days'),
                 validator: (v) => (v == null || v.trim().isEmpty)
                     ? 'Please enter the trip duration (e.g. 2-3 days)'
@@ -152,6 +153,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _budgetController,
+                maxLength: 50,
                 decoration: const InputDecoration(
                   hintText: 'e.g. Low, Medium, High or ~EUR 200',
                 ),
