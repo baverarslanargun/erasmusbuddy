@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
                   },
                   child: CircleAvatar(
                     radius: 28,
-                    backgroundColor: colorScheme.primary.withOpacity(0.1),
+                    backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
                     child: Text(
                       capitalizedName.isNotEmpty ? capitalizedName[0].toUpperCase() : 'S',
                       style: TextStyle(
@@ -340,7 +340,7 @@ class _StatCard extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: iconColor.withOpacity(0.8),
+                  color: iconColor.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
           ),

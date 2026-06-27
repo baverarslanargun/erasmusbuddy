@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Avatar
             CircleAvatar(
               radius: 50,
-              backgroundColor: colorScheme.primary.withOpacity(0.1),
+              backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
               child: Text(
                 displayName.isNotEmpty ? displayName[0].toUpperCase() : 'S',
                 style: TextStyle(
@@ -307,7 +307,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceVariant.withOpacity(0.3),
+                      color: colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.3,
+                      ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: colorScheme.outlineVariant),
                     ),
@@ -316,7 +318,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icon(
                           Icons.travel_explore,
                           size: 48,
-                          color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+                          color: colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -406,7 +410,7 @@ class _StatCard extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: iconColor.withOpacity(0.8),
+                  color: iconColor.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
           ),
