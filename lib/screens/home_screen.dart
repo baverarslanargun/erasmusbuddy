@@ -267,8 +267,8 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.add_circle_outline,
                   title: 'Add Travel Idea',
                   subtitle: 'Share new trip',
-                  color: Colors.emerald.shade50,
-                  iconColor: Colors.emerald.shade700,
+                  color: Colors.green.shade50,
+                  iconColor: Colors.green.shade700,
                   onTap: () {
                     Navigator.pushNamed(context, AddTravelPlanScreen.routeName);
                   },
