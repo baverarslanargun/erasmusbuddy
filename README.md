@@ -105,8 +105,8 @@ The following folders must not be committed to the repository (ensure they are i
 
 | Name |
 |------|--------|
-| Umut Tuncer | 
-| Baver Arslanargun | 
-| Poyraz Erdoğan |
-| Berhan Kemal | 
-| Natoli Hunduma Legesse |
+| Baver Arslanargun | Authentication, Firebase setup |
+| Poyraz Erdoğan | TravelIdeaService, detail screen |
+| Berhan Kemal | Travel idea list |
+| Natoli Hunduma Legesse | Add travel idea form |
+| Umut Tuncer | Home screen, README/docs |

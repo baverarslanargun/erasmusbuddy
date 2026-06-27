@@ -8,6 +8,7 @@ import 'screens/add_travel_plan_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/travel_plan_detail_screen.dart';
 import 'screens/travel_plan_list_screen.dart';
 
@@ -37,6 +38,7 @@ class ErasmusBuddyApp extends StatelessWidget {
         LoginScreen.routeName: (context) => const LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
         TravelPlanListScreen.routeName: (context) =>
             const TravelPlanListScreen(),
         TravelPlanDetailScreen.routeName: (context) =>
