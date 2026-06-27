@@ -351,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.pushNamed(
                             context,
                             '/travel-idea-detail',
-                            arguments: idea,
+                            arguments: idea.id,
                           );
                         },
                       ),
