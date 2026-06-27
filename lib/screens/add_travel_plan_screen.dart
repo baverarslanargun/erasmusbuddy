@@ -100,11 +100,12 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _titleController,
                 textCapitalization: TextCapitalization.sentences,
+                maxLength: 100,
                 decoration: const InputDecoration(
                   hintText: 'e.g. Budapest + Bratislava Weekend',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Title is required'
+                    ? 'Please enter a title for your travel idea'
                     : null,
               ),
 
@@ -115,11 +116,12 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
               TextFormField(
                 controller: _destinationController,
                 textCapitalization: TextCapitalization.words,
+                maxLength: 100,
                 decoration: const InputDecoration(
                   hintText: 'e.g. Budapest, Hungary',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Destination is required'
+                    ? 'Please enter the destination (city and country)'
                     : null,
               ),
 
@@ -131,7 +133,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                 controller: _durationController,
                 decoration: const InputDecoration(hintText: 'e.g. 2-3 days'),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Duration is required'
+                    ? 'Please enter the trip duration (e.g. 2-3 days)'
                     : null,
               ),
               const SizedBox(height: 20),
@@ -144,7 +146,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                   hintText: 'e.g. Low, Medium, High or ~200€',
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Budget is required'
+                    ? 'Please enter an estimated budget (e.g. Low, ~200€)'
                     : null,
               ),
               const SizedBox(height: 20),
@@ -162,7 +164,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
                   alignLabelWithHint: true,
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Description is required'
+                    ? 'Please add a short description of your trip'
                     : null,
               ),
               const SizedBox(height: 32),
