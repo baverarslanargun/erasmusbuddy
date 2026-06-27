@@ -103,8 +103,8 @@ The following folders must not be committed to the repository (ensure they are i
 
 ## Team Members
 
-| Name |
-|------|--------|
+| Name | Assignment |
+|------|-----------|
 | Baver Arslanargun | Authentication, Firebase setup |
 | Poyraz Erdoğan | TravelIdeaService, detail screen |
 | Berhan Kemal | Travel idea list |
