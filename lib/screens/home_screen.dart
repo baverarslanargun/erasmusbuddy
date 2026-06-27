@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/auth_service.dart';
@@ -77,6 +76,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final currentUser = AuthService().currentUser;
+    final email = currentUser?.email ?? '';
     final displayName = currentUser?.displayName ?? email.split('@').first;
     final capitalizedName = displayName.isNotEmpty
         ? '${displayName[0].toUpperCase()}${displayName.substring(1)}'
@@ -265,8 +266,8 @@ class HomeScreen extends StatelessWidget {
                   icon: Icons.add_circle_outline,
                   title: 'Add Travel Idea',
                   subtitle: 'Share new trip',
-                  color: Colors.emerald.shade50,
-                  iconColor: Colors.emerald.shade700,
+                  color: Colors.green.shade50,
+                  iconColor: Colors.green.shade700,
                   onTap: () {
                     Navigator.pushNamed(context, AddTravelPlanScreen.routeName);
                   },
