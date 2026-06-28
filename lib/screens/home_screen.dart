@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/auth_service.dart';
+import '../services/travel_idea_service.dart';
 import 'add_travel_plan_screen.dart';
 import 'auth/login_screen.dart';
-import 'travel_plan_list_screen.dart';
 import 'profile_screen.dart';
+import 'travel_plan_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -29,13 +29,17 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.lightbulb_outline, color: Colors.purple.shade700, size: 28),
+                    Icon(
+                      Icons.lightbulb_outline,
+                      color: Colors.purple.shade700,
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       'Erasmus Travel Tips',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -43,19 +47,22 @@ class HomeScreen extends StatelessWidget {
                 const _TipItem(
                   icon: Icons.train_outlined,
                   title: 'Eurail/Interrail Pass',
-                  description: 'Get discount passes if you plan to travel across multiple European countries by train.',
+                  description:
+                      'Get discount passes if you plan to travel across multiple European countries by train.',
                 ),
                 const SizedBox(height: 16),
                 const _TipItem(
                   icon: Icons.badge_outlined,
                   title: 'ISIC Student Card',
-                  description: 'Always carry your international student identity card for huge discounts on museums and transport.',
+                  description:
+                      'Always carry your international student identity card for huge discounts on museums and transport.',
                 ),
                 const SizedBox(height: 16),
                 const _TipItem(
                   icon: Icons.groups_outlined,
                   title: 'ESN Events',
-                  description: 'Join local Erasmus Student Network groups for budget-friendly student trips and social events.',
+                  description:
+                      'Join local Erasmus Student Network groups for budget-friendly student trips and social events.',
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -78,6 +85,7 @@ class HomeScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final currentUser = AuthService().currentUser;
+    final travelIdeaService = TravelIdeaService();
     final email = currentUser?.email ?? '';
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final gridAspectRatio = textScale > 1.2 ? 0.8 : 1.15;
@@ -105,7 +113,9 @@ class HomeScreen extends StatelessWidget {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Confirm Logout'),
-                  content: const Text('Are you sure you want to log out of ErasmusBuddy?'),
+                  content: const Text(
+                    'Are you sure you want to log out of ErasmusBuddy?',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
@@ -123,7 +133,10 @@ class HomeScreen extends StatelessWidget {
                 try {
                   await AuthService().logout();
                   if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                    Navigator.pushReplacementNamed(
+                      context,
+                      LoginScreen.routeName,
+                    );
                   }
                 } catch (error) {
                   if (context.mounted) {
@@ -155,7 +168,9 @@ class HomeScreen extends StatelessWidget {
                     radius: 28,
                     backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
                     child: Text(
-                      capitalizedName.isNotEmpty ? capitalizedName[0].toUpperCase() : 'S',
+                      capitalizedName.isNotEmpty
+                          ? capitalizedName[0].toUpperCase()
+                          : 'S',
                       style: TextStyle(
                         color: colorScheme.primary,
                         fontSize: 22,
@@ -202,38 +217,41 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 28),
 
             // ── Quick Stats ──
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('travelIdeas').snapshots(),
-              builder: (context, snapshot) {
-                final totalIdeasCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
-                final myIdeasCount = snapshot.hasData
-                    ? snapshot.data!.docs
-                        .where((doc) => doc.get('createdBy') == (currentUser?.uid ?? ''))
-                        .length
-                    : 0;
+            StreamBuilder<int>(
+              stream: travelIdeaService.getTravelIdeaCount(),
+              builder: (context, totalSnapshot) {
+                return StreamBuilder<int>(
+                  stream: travelIdeaService.getUserTravelIdeaCount(
+                    currentUser?.uid ?? '',
+                  ),
+                  builder: (context, userSnapshot) {
+                    final totalIdeasCount = totalSnapshot.data ?? 0;
+                    final myIdeasCount = userSnapshot.data ?? 0;
 
-                return Row(
-                  children: [
-                    Expanded(
-                      child: _StatCard(
-                        title: 'Total Ideas',
-                        value: '$totalIdeasCount',
-                        icon: Icons.travel_explore,
-                        color: Colors.blue.shade50,
-                        iconColor: Colors.blue.shade700,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _StatCard(
-                        title: 'My Shared Plans',
-                        value: '$myIdeasCount',
-                        icon: Icons.share_arrival_time_outlined,
-                        color: Colors.teal.shade50,
-                        iconColor: Colors.teal.shade700,
-                      ),
-                    ),
-                  ],
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: _StatCard(
+                            title: 'Total Ideas',
+                            value: '$totalIdeasCount',
+                            icon: Icons.travel_explore,
+                            color: Colors.blue.shade50,
+                            iconColor: Colors.blue.shade700,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _StatCard(
+                            title: 'My Shared Plans',
+                            value: '$myIdeasCount',
+                            icon: Icons.share_arrival_time_outlined,
+                            color: Colors.teal.shade50,
+                            iconColor: Colors.teal.shade700,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             ),
@@ -262,7 +280,10 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.indigo.shade50,
                   iconColor: Colors.indigo.shade700,
                   onTap: () {
-                    Navigator.pushNamed(context, TravelPlanListScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      TravelPlanListScreen.routeName,
+                    );
                   },
                 ),
                 _GridNavigationCard(
@@ -335,17 +356,17 @@ class _StatCard extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: iconColor,
-                ),
+              fontWeight: FontWeight.bold,
+              color: iconColor,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: iconColor.withValues(alpha: 0.8),
-                  fontWeight: FontWeight.w500,
-                ),
+              color: iconColor.withValues(alpha: 0.8),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -389,10 +410,7 @@ class _GridNavigationCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
                 child: Icon(icon, color: iconColor, size: 24),
               ),
               Column(
@@ -401,8 +419,8 @@ class _GridNavigationCard extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -410,8 +428,8 @@ class _GridNavigationCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -456,7 +474,10 @@ class _TipItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
               ),
               const SizedBox(height: 4),
               Text(

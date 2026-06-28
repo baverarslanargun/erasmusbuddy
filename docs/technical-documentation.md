@@ -38,6 +38,8 @@ Firebase is configured for Android.
 
 - Creating a travel idea
 - Listening to all travel ideas
+- Listening to travel idea counts
+- Listening to a user's travel ideas and idea count
 - Fetching one travel idea by document ID
 
 The `TravelIdea` model contains:
@@ -49,9 +51,12 @@ The `TravelIdea` model contains:
 - `duration`
 - `budget`
 - `createdBy`
+- `createdByName`
 - `createdAt`
 
-`createdBy` stores the Firebase Authentication user ID. `createdAt` is stored as an ISO 8601 string.
+`createdBy` stores the Firebase Authentication user ID. New `createdAt` values use a Firestore server timestamp, while the model remains compatible with older ISO 8601 string records.
+
+Firestore security rules allow authenticated users to read travel ideas and create records only when `createdBy` matches their authentication ID. Updates and deletes are disabled because the current app has no edit or delete flow.
 
 ## Navigation
 

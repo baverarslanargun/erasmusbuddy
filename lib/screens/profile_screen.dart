@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../core/theme/app_colors.dart';
 import '../models/travel_idea.dart';
 import '../services/auth_service.dart';
+import '../services/travel_idea_service.dart';
 import 'auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TravelIdeaService _travelIdeaService = TravelIdeaService();
   bool _isEditingName = false;
   late TextEditingController _nameController;
   bool _isLoading = false;
@@ -31,7 +32,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final capitalizedDefaultName = defaultName.isNotEmpty
         ? '${defaultName[0].toUpperCase()}${defaultName.substring(1)}'
         : 'Student';
-    _nameController = TextEditingController(text: user?.displayName ?? capitalizedDefaultName);
+    _nameController = TextEditingController(
+      text: user?.displayName ?? capitalizedDefaultName,
+    );
   }
 
   @override
@@ -194,7 +197,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onPressed: () {
                         setState(() {
                           _isEditingName = false;
-                          _nameController.text = user?.displayName ?? capitalizedDefaultName;
+                          _nameController.text =
+                              user?.displayName ?? capitalizedDefaultName;
                         });
                       },
                     ),
@@ -251,35 +255,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 16),
 
             // Statistics Cards
-            StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('travelIdeas')
-                  .where('createdBy', isEqualTo: userId)
-                  .snapshots(),
+            StreamBuilder<int>(
+              stream: _travelIdeaService.getUserTravelIdeaCount(userId),
               builder: (context, snapshot) {
-                final myIdeasCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
-                return Row(
-                  children: [
-                    Expanded(
-                      child: _StatCard(
-                        title: 'My Shared Ideas',
-                        value: '$myIdeasCount',
-                        icon: Icons.share,
-                        color: Colors.blue.shade50,
-                        iconColor: Colors.blue.shade700,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _StatCard(
-                        title: 'Saved Plans',
-                        value: '0',
-                        icon: Icons.bookmark_border,
-                        color: Colors.teal.shade50,
-                        iconColor: Colors.teal.shade700,
-                      ),
-                    ),
-                  ],
+                final myIdeasCount = snapshot.data ?? 0;
+                return SizedBox(
+                  width: double.infinity,
+                  child: _StatCard(
+                    title: 'My Shared Ideas',
+                    value: '$myIdeasCount',
+                    icon: Icons.share,
+                    color: Colors.blue.shade50,
+                    iconColor: Colors.blue.shade700,
+                  ),
                 );
               },
             ),
@@ -298,17 +286,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 16),
 
             // Stream list of user's own travel ideas
-            StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('travelIdeas')
-                  .where('createdBy', isEqualTo: userId)
-                  .snapshots(),
+            StreamBuilder<List<TravelIdea>>(
+              stream: _travelIdeaService.getUserTravelIdeas(userId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
@@ -341,21 +326,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                 }
 
-                final docs = snapshot.data!.docs;
+                final ideas = snapshot.data!;
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: docs.length,
+                  itemCount: ideas.length,
                   itemBuilder: (context, index) {
-                    final data = docs[index].data() as Map<String, dynamic>;
-                    data['id'] = docs[index].id;
-                    final idea = TravelIdea.fromMap(data);
+                    final idea = ideas[index];
 
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
                         title: Text(idea.title),
-                        subtitle: Text('${idea.destination} • ${idea.duration}'),
+                        subtitle: Text(
+                          '${idea.destination} • ${idea.duration}',
+                        ),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () {
                           Navigator.pushNamed(
@@ -408,17 +393,17 @@ class _StatCard extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: iconColor,
-                ),
+              fontWeight: FontWeight.bold,
+              color: iconColor,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: iconColor.withValues(alpha: 0.8),
-                  fontWeight: FontWeight.w500,
-                ),
+              color: iconColor.withValues(alpha: 0.8),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
