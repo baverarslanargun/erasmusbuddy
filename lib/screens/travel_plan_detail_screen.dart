@@ -3,8 +3,6 @@ import 'package:erasmusbuddy/models/travel_idea.dart';
 import 'package:erasmusbuddy/services/travel_idea_service.dart';
 
 class TravelPlanDetailScreen extends StatefulWidget {
-  final String currentUserId = "user_123";
-
   const TravelPlanDetailScreen({super.key});
 
   static const routeName = '/travel-idea-detail';
@@ -16,13 +14,24 @@ class TravelPlanDetailScreen extends StatefulWidget {
 class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
   late Future<TravelIdea?> _travelIdeaFuture;
   final TravelIdeaService _service = TravelIdeaService();
+  String _travelIdeaId = '';
+  bool _hasLoadedIdea = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)!.settings.arguments;
-    final String travelIdeaId = (args is String) ? args : '';
-    _travelIdeaFuture = _service.getTravelIdeaById(travelIdeaId);
+    if (_hasLoadedIdea) return;
+
+    final args = ModalRoute.of(context)?.settings.arguments;
+    _travelIdeaId = (args is String) ? args : '';
+    _travelIdeaFuture = _service.getTravelIdeaById(_travelIdeaId);
+    _hasLoadedIdea = true;
+  }
+
+  void _retry() {
+    setState(() {
+      _travelIdeaFuture = _service.getTravelIdeaById(_travelIdeaId);
+    });
   }
 
   @override
@@ -50,14 +59,24 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    snapshot.error.toString(),
+                    'Please check your connection and try again.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Go Back'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Go Back'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: _retry,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/travel_idea_service.dart';
 import 'add_travel_plan_screen.dart';
-import 'auth/login_screen.dart';
 import 'profile_screen.dart';
 import 'travel_plan_list_screen.dart';
 
@@ -133,16 +132,13 @@ class HomeScreen extends StatelessWidget {
                 try {
                   await AuthService().logout();
                   if (context.mounted) {
-                    Navigator.pushReplacementNamed(
-                      context,
-                      LoginScreen.routeName,
-                    );
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 } catch (error) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Logout failed: ${error.toString()}'),
+                      const SnackBar(
+                        content: Text('Logout failed. Please try again.'),
                       ),
                     );
                   }
@@ -225,30 +221,54 @@ class HomeScreen extends StatelessWidget {
                     currentUser?.uid ?? '',
                   ),
                   builder: (context, userSnapshot) {
-                    final totalIdeasCount = totalSnapshot.data ?? 0;
-                    final myIdeasCount = userSnapshot.data ?? 0;
+                    final hasError =
+                        totalSnapshot.hasError || userSnapshot.hasError;
+                    final totalIdeasCount = totalSnapshot.hasData
+                        ? '${totalSnapshot.data}'
+                        : hasError
+                        ? '—'
+                        : '…';
+                    final myIdeasCount = userSnapshot.hasData
+                        ? '${userSnapshot.data}'
+                        : hasError
+                        ? '—'
+                        : '…';
 
-                    return Row(
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _StatCard(
-                            title: 'Total Ideas',
-                            value: '$totalIdeasCount',
-                            icon: Icons.travel_explore,
-                            color: Colors.blue.shade50,
-                            iconColor: Colors.blue.shade700,
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _StatCard(
+                                title: 'Total Ideas',
+                                value: totalIdeasCount,
+                                icon: Icons.travel_explore,
+                                color: Colors.blue.shade50,
+                                iconColor: Colors.blue.shade700,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _StatCard(
+                                title: 'My Shared Plans',
+                                value: myIdeasCount,
+                                icon: Icons.share_arrival_time_outlined,
+                                color: Colors.teal.shade50,
+                                iconColor: Colors.teal.shade700,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _StatCard(
-                            title: 'My Shared Plans',
-                            value: '$myIdeasCount',
-                            icon: Icons.share_arrival_time_outlined,
-                            color: Colors.teal.shade50,
-                            iconColor: Colors.teal.shade700,
+                        if (hasError) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'Statistics are temporarily unavailable.',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.error,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     );
                   },

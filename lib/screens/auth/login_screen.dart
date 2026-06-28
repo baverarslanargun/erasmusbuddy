@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
-import '../home_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -77,15 +76,25 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (error) {
       if (!mounted) {
         return;
       }
 
+      final message = switch (error.code) {
+        'invalid-credential' ||
+        'user-not-found' ||
+        'wrong-password' => 'Email or password is incorrect.',
+        'too-many-requests' =>
+          'Too many login attempts. Please wait and try again.',
+        'network-request-failed' =>
+          'Network unavailable. Check your connection and try again.',
+        _ => 'Login failed. Please try again.',
+      };
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(error.message ?? 'Login failed')));
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (_) {
       if (!mounted) {
         return;

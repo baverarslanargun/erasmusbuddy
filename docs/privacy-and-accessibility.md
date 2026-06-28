@@ -7,6 +7,7 @@ ErasmusBuddy uses Firebase Authentication and Cloud Firestore.
 Firebase Authentication manages:
 
 - User email addresses
+- User display names
 - Password-based authentication
 - Login sessions
 - Firebase user IDs
@@ -22,15 +23,18 @@ Each travel idea document contains:
 - Duration
 - Budget
 - Creator user ID
+- Creator display name
 - Creation date
 
 The application does not collect GPS location, contacts, payment details, or transportation data.
+
+The registration prototype displays optional Erasmus university, city, country, and travel-interest fields to communicate the planned product direction. These prototype values are not uploaded or stored in the current MVP.
 
 ## Privacy Notes
 
 ErasmusBuddy is a student MVP. Only data needed for authentication and sharing travel ideas should be collected.
 
-Before the final demo, Firestore security rules should be checked so that access matches the intended authenticated user flow. Test accounts and travel ideas should not contain real private or sensitive information.
+Firestore security rules limit travel idea access to authenticated users and require new ideas to use the signed-in user's ID. Test accounts and travel ideas should not contain real private or sensitive information.
 
 The current MVP does not include in-app account deletion, data export, or travel idea deletion. These limitations should be stated clearly during evaluation. Test data can be removed through Firebase Console.
 

@@ -5,7 +5,6 @@ import '../core/theme/app_colors.dart';
 import '../models/travel_idea.dart';
 import '../services/auth_service.dart';
 import '../services/travel_idea_service.dart';
-import 'auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -45,31 +44,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _updateProfileName() async {
     final newName = _nameController.text.trim();
-    if (newName.isEmpty) return;
+    if (newName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Display name cannot be empty.')),
+      );
+      return;
+    }
+
+    final user = _auth.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Your session has expired. Please sign in again.'),
+        ),
+      );
+      return;
+    }
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      await _auth.currentUser?.updateDisplayName(newName);
-      await _auth.currentUser?.reload();
+      await user.updateDisplayName(newName);
+      await user.reload();
+
+      if (!mounted) return;
+
       setState(() {
         _isEditingName = false;
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated successfully!'),
+          backgroundColor: AppColors.secondary,
+        ),
+      );
+    } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Profile updated successfully!'),
-            backgroundColor: AppColors.secondary,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update profile: $e'),
+            content: Text('Failed to update profile. Please try again.'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -126,17 +142,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 try {
                   await AuthService().logout();
                   if (context.mounted) {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      LoginScreen.routeName,
-                      (route) => false,
-                    );
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 } catch (error) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Logout failed: ${error.toString()}'),
+                      const SnackBar(
+                        content: Text('Logout failed. Please try again.'),
                       ),
                     );
                   }
@@ -258,12 +270,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             StreamBuilder<int>(
               stream: _travelIdeaService.getUserTravelIdeaCount(userId),
               builder: (context, snapshot) {
-                final myIdeasCount = snapshot.data ?? 0;
+                final myIdeasCount = snapshot.hasError
+                    ? '—'
+                    : snapshot.hasData
+                    ? '${snapshot.data}'
+                    : '…';
                 return SizedBox(
                   width: double.infinity,
                   child: _StatCard(
                     title: 'My Shared Ideas',
-                    value: '$myIdeasCount',
+                    value: myIdeasCount,
                     icon: Icons.share,
                     color: Colors.blue.shade50,
                     iconColor: Colors.blue.shade700,
@@ -291,6 +307,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: colorScheme.errorContainer.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: colorScheme.error),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 40,
+                          color: colorScheme.error,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Could not load your travel ideas.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onErrorContainer,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () => setState(() {}),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {

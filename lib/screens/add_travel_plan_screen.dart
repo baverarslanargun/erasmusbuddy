@@ -39,13 +39,22 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   Future<void> _onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final currentUser = _authService.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Your session has expired. Please sign in again.'),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
-    final currentUser = _authService.currentUser;
-    final profileName = currentUser?.displayName?.trim();
+    final profileName = currentUser.displayName?.trim();
     final createdByName = profileName != null && profileName.isNotEmpty
         ? profileName
-        : currentUser?.email?.split('@').first ?? 'Erasmus student';
+        : currentUser.email?.split('@').first ?? 'Erasmus student';
     final travelIdea = TravelIdea(
       id: '',
       title: _titleController.text.trim(),
@@ -53,7 +62,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
       duration: _durationController.text.trim(),
       budget: _budgetController.text.trim(),
       description: _descriptionController.text.trim(),
-      createdBy: currentUser?.uid ?? 'anonymous',
+      createdBy: currentUser.uid,
       createdByName: createdByName,
       createdAt: DateTime.now(),
     );

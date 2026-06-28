@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
-import '../home_screen.dart';
-import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -52,15 +50,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return;
       }
 
-      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (error) {
       if (!mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message ?? 'Registration failed')),
-      );
+      final message = switch (error.code) {
+        'email-already-in-use' =>
+          'An account already exists for this email. Try logging in.',
+        'invalid-email' => 'Enter a valid email address.',
+        'weak-password' => 'Choose a stronger password.',
+        'network-request-failed' =>
+          'Network unavailable. Check your connection and try again.',
+        _ => 'Registration failed. Please try again.',
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (_) {
       if (!mounted) {
         return;
@@ -86,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    Navigator.maybePop(context);
   }
 
   @override
@@ -347,6 +354,8 @@ class ErasmusInfoStep extends StatelessWidget {
         Text('Erasmus information'),
         SizedBox(height: 8),
         Text('Tell others where your Erasmus experience is happening.'),
+        SizedBox(height: 8),
+        Text('Prototype fields: these details are not uploaded or stored yet.'),
         SizedBox(height: 16),
         TextField(
           decoration: InputDecoration(
@@ -386,7 +395,9 @@ class TravelInterestsStep extends StatelessWidget {
       children: [
         Text('Travel interests'),
         SizedBox(height: 8),
-        Text('Choose a few travel idea types you might like.'),
+        Text('Preview the travel idea types planned for personalization.'),
+        SizedBox(height: 8),
+        Text('These prototype interests are not stored in the current MVP.'),
         SizedBox(height: 16),
         Wrap(
           spacing: 8,

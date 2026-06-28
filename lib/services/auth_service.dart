@@ -7,6 +7,8 @@ class AuthService {
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  Stream<User?> get userChanges => _auth.userChanges();
+
   Future<UserCredential> login(String email, String password) {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
@@ -21,7 +23,13 @@ class AuthService {
       password: password,
     );
 
-    await credential.user?.updateDisplayName(username);
+    try {
+      await credential.user?.updateDisplayName(username);
+    } catch (_) {
+      // The Firebase account is already valid. The optional display name can
+      // be set later from the profile instead of reporting a false failure.
+    }
+
     return credential;
   }
 
