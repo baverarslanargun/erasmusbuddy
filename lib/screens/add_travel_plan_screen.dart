@@ -24,6 +24,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   final _durationController = TextEditingController();
   final _placesController = TextEditingController();
   final _noteController = TextEditingController();
+  final _destinationController = TextEditingController();
+  final _budgetController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   final List<String> _availableCategories = [
     'travel',
@@ -44,6 +47,9 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
     _durationController.dispose();
     _placesController.dispose();
     _noteController.dispose();
+    _destinationController.dispose();
+    _budgetController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -62,8 +68,8 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 			title: _titleController.text.trim(),
 			destination: _destinationController.text.trim(),
 			duration: _durationController.text.trim(),
-			budget: _budgetController.text.trim(),
-			description: _descriptionController.text.trim(),
+            budget: _budgetController.text.trim(),
+            description: _noteController.text.trim(),
 			createdBy: currentUser?.uid ?? 'anonymous',
 			createdByName: createdByName,
 			createdAt: DateTime.now(),
@@ -74,11 +80,11 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 
 			if (!mounted) return;
 
-			_titleController.clear();
-			_destinationController.clear();
-			_durationController.clear();
-			_budgetController.clear();
-			_descriptionController.clear();
+            _titleController.clear();
+            _destinationController.clear();
+            _durationController.clear();
+            _budgetController.clear();
+            _noteController.clear();
 
 			ScaffoldMessenger.of(context).showSnackBar(
 				const SnackBar(
