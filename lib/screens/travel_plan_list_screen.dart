@@ -57,7 +57,11 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
               final idea = ideas[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, TravelPlanDetailScreen.routeName, arguments: idea.id);
+                  Navigator.pushNamed(
+                    context,
+                    TravelPlanDetailScreen.routeName,
+                    arguments: idea.id,
+                  );
                 },
                 child: Card(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -84,9 +88,8 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
                             Expanded(
                               child: Text(
                                 idea.destination,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),

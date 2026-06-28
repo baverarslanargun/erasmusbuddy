@@ -27,16 +27,13 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: FutureBuilder<TravelIdea?>(
         future: _travelIdeaFuture,
         builder: (context, snapshot) {
           // Loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           // Error state
@@ -73,7 +70,11 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.travel_explore, size: 64, color: Colors.grey),
+                  const Icon(
+                    Icons.travel_explore,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Travel idea not found',
@@ -135,7 +136,9 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                                     ),
                                     TextSpan(
                                       text: idea.createdByName,
-                                      style: const TextStyle(color: Colors.blue),
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -144,7 +147,10 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                             const SizedBox(width: 8),
                             Text(
                               idea.createdAt.toString().split(' ')[0],
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
                             ),
                           ],
                         ),
@@ -156,8 +162,13 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                             const Icon(Icons.location_on, color: Colors.blue),
                             const SizedBox(width: 5),
                             Expanded(
-                              child: Text(idea.destination,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                              child: Text(
+                                idea.destination,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -195,8 +206,13 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
 
                         const Divider(height: 40),
 
-                        const Text("Description",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Text(
+                          "Description",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Container(
                           width: double.infinity,
@@ -208,7 +224,10 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                           ),
                           child: Text(
                             idea.description,
-                            style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 100),

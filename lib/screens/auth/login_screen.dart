@@ -83,17 +83,17 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message ?? 'Login failed')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message ?? 'Login failed')));
     } catch (_) {
       if (!mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login failed')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Login failed')));
     } finally {
       if (mounted) {
         setState(() {
@@ -120,7 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
-              const Text('Continue to explore travel ideas shared by Erasmus students.'),
+              const Text(
+                'Continue to explore travel ideas shared by Erasmus students.',
+              ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _emailController,
@@ -147,7 +149,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                     icon: Icon(
-                      showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      showPassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                     ),
                   ),
                   border: const OutlineInputBorder(),
@@ -166,9 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: _isLoading ? null : () {
-                  Navigator.pushNamed(context, RegisterScreen.routeName);
-                },
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        Navigator.pushNamed(context, RegisterScreen.routeName);
+                      },
                 child: const Text('Create an account'),
               ),
             ],
