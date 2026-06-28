@@ -123,7 +123,7 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                                     style: TextStyle(color: Colors.blueGrey),
                                   ),
                                   TextSpan(
-                                    text: idea.createdBy,
+                                    text: idea.createdByName,
                                     style: const TextStyle(color: Colors.blue),
                                   ),
                                 ],

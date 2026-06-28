@@ -42,6 +42,10 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 		setState(() => _isSubmitting = true);
 
 		final currentUser = _authService.currentUser;
+		final profileName = currentUser?.displayName?.trim();
+		final createdByName = profileName != null && profileName.isNotEmpty
+			? profileName
+			: currentUser?.email?.split('@').first ?? 'Erasmus student';
 		final travelIdea = TravelIdea(
 			id: '',
 			title: _titleController.text.trim(),
@@ -50,6 +54,7 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
 			budget: _budgetController.text.trim(),
 			description: _descriptionController.text.trim(),
 			createdBy: currentUser?.uid ?? 'anonymous',
+			createdByName: createdByName,
 			createdAt: DateTime.now(),
 		);
 

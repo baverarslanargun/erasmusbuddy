@@ -7,6 +7,7 @@ class TravelIdea {
 		required this.duration,
 		required this.budget,
 		required this.createdBy,
+		required this.createdByName,
 		required this.createdAt,
 	});
 
@@ -17,6 +18,7 @@ class TravelIdea {
 	final String duration;
 	final String budget;
 	final String createdBy;
+	final String createdByName;
 	final DateTime createdAt;
 
 	Map<String, dynamic> toMap() {
@@ -28,6 +30,7 @@ class TravelIdea {
 			'duration': duration,
 			'budget': budget,
 			'createdBy': createdBy,
+			'createdByName': createdByName,
 			'createdAt': createdAt.toIso8601String(),
 		};
 	}
@@ -53,6 +56,8 @@ class TravelIdea {
 			duration: map['duration'] as String? ?? '',
 			budget: map['budget'] as String? ?? '',
 			createdBy: map['createdBy'] as String? ?? '',
+			createdByName:
+				map['createdByName'] as String? ?? 'Erasmus student',
 			createdAt: parseCreatedAt(map['createdAt']),
 		);
 	}

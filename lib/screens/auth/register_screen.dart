@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 	final _authService = AuthService();
 
 	int step = 0;
+	String username = '';
 	String email = '';
 	String password = '';
 	bool isLoading = false;
@@ -45,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 		});
 
 		try {
-			await _authService.register(email, password);
+			await _authService.register(email, password, username);
 
 			if (!mounted) {
 				return;
@@ -144,6 +145,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 	Widget currentStepContent() {
 		if (step == 0) {
 			return AccountStep(
+				onSavedUsername: (value) {
+					username = value;
+				},
 				onSavedEmail: (value) {
 					email = value;
 				},
@@ -164,10 +168,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 class AccountStep extends StatefulWidget {
 	const AccountStep({
 		super.key,
+		required this.onSavedUsername,
 		required this.onSavedEmail,
 		required this.onSavedPassword,
 	});
 
+	final ValueChanged<String> onSavedUsername;
 	final ValueChanged<String> onSavedEmail;
 	final ValueChanged<String> onSavedPassword;
 
@@ -257,6 +263,9 @@ class _AccountStepState extends State<AccountStep> {
 				const SizedBox(height: 16),
 				TextFormField(
 					validator: validateUsername,
+					onSaved: (value) {
+						widget.onSavedUsername(value?.trim() ?? '');
+					},
 					decoration: const InputDecoration(
 						labelText: 'Username',
 						prefixIcon: Icon(Icons.person_outline),
