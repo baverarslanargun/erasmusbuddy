@@ -5,6 +5,8 @@ class AuthService {
 
 	User? get currentUser => _auth.currentUser;
 
+	Stream<User?> get authStateChanges => _auth.authStateChanges();
+
 	Future<UserCredential> login(String email, String password) {
 		return _auth.signInWithEmailAndPassword(
 			email: email,
@@ -12,11 +14,18 @@ class AuthService {
 		);
 	}
 
-	Future<UserCredential> register(String email, String password) {
-		return _auth.createUserWithEmailAndPassword(
+	Future<UserCredential> register(
+		String email,
+		String password,
+		String username,
+	) async {
+		final credential = await _auth.createUserWithEmailAndPassword(
 			email: email,
 			password: password,
 		);
+
+		await credential.user?.updateDisplayName(username);
+		return credential;
 	}
 
 	Future<void> logout() {

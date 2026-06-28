@@ -8,13 +8,15 @@ import 'screens/add_travel_plan_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/travel_plan_detail_screen.dart';
 import 'screens/travel_plan_list_screen.dart';
+import 'services/auth_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  if (usesFirebaseAuth) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -32,16 +34,49 @@ class ErasmusBuddyApp extends StatelessWidget {
       title: 'ErasmusBuddy',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      initialRoute: LoginScreen.routeName,
+      home: const AuthGate(),
       routes: {
         LoginScreen.routeName: (context) => const LoginScreen(),
         RegisterScreen.routeName: (context) => const RegisterScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
+        ProfileScreen.routeName: (context) => const ProfileScreen(),
         TravelPlanListScreen.routeName: (context) =>
             const TravelPlanListScreen(),
         TravelPlanDetailScreen.routeName: (context) =>
             const TravelPlanDetailScreen(),
         AddTravelPlanScreen.routeName: (context) => const AddTravelPlanScreen(),
+      },
+    );
+  }
+}
+
+bool get usesFirebaseAuth {
+  return !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (!usesFirebaseAuth) {
+      return const LoginScreen();
+    }
+
+    return StreamBuilder(
+      stream: AuthService().authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return const HomeScreen();
+        }
+
+        return const LoginScreen();
       },
     );
   }
