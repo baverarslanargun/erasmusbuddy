@@ -9,7 +9,7 @@ The app helps students find inspiration from travel plans created by other stude
 ## Main Idea
 
 A travel plan idea is a user-written trip suggestion. It includes the country, cities, trip duration, places to visit, and a short personal note.
-Users can discover these ideas, read the details, save the ones they like, and create their own travel plan ideas.
+Users can discover these ideas, read the details, and create their own travel plan ideas.
 
 A travel plan idea includes:
 - Title

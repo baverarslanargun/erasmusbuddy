@@ -15,8 +15,8 @@ class AddTravelPlanScreen extends StatefulWidget {
 
 class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
   final _formKey = GlobalKey<FormState>();
-	final _authService = AuthService();
-	final _travelIdeaService = TravelIdeaService();
+  final _authService = AuthService();
+  final _travelIdeaService = TravelIdeaService();
 
   final _titleController = TextEditingController();
   final _destinationController = TextEditingController();
@@ -36,57 +36,66 @@ class _AddTravelPlanScreenState extends State<AddTravelPlanScreen> {
     super.dispose();
   }
 
-	Future<void> _onSubmit() async {
-		if (!_formKey.currentState!.validate()) return;
+  Future<void> _onSubmit() async {
+    if (!_formKey.currentState!.validate()) return;
 
-		setState(() => _isSubmitting = true);
+    final currentUser = _authService.currentUser;
+    if (currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Your session has expired. Please sign in again.'),
+        ),
+      );
+      return;
+    }
 
-		final currentUser = _authService.currentUser;
-		final profileName = currentUser?.displayName?.trim();
-		final createdByName = profileName != null && profileName.isNotEmpty
-			? profileName
-			: currentUser?.email?.split('@').first ?? 'Erasmus student';
-		final travelIdea = TravelIdea(
-			id: '',
-			title: _titleController.text.trim(),
-			destination: _destinationController.text.trim(),
-			duration: _durationController.text.trim(),
-			budget: _budgetController.text.trim(),
-			description: _descriptionController.text.trim(),
-			createdBy: currentUser?.uid ?? 'anonymous',
-			createdByName: createdByName,
-			createdAt: DateTime.now(),
-		);
+    setState(() => _isSubmitting = true);
 
-		try {
-			await _travelIdeaService.createTravelIdea(travelIdea);
+    final profileName = currentUser.displayName?.trim();
+    final createdByName = profileName != null && profileName.isNotEmpty
+        ? profileName
+        : currentUser.email?.split('@').first ?? 'Erasmus student';
+    final travelIdea = TravelIdea(
+      id: '',
+      title: _titleController.text.trim(),
+      destination: _destinationController.text.trim(),
+      duration: _durationController.text.trim(),
+      budget: _budgetController.text.trim(),
+      description: _descriptionController.text.trim(),
+      createdBy: currentUser.uid,
+      createdByName: createdByName,
+      createdAt: DateTime.now(),
+    );
 
-			if (!mounted) return;
+    try {
+      await _travelIdeaService.createTravelIdea(travelIdea);
 
-			_titleController.clear();
-			_destinationController.clear();
-			_durationController.clear();
-			_budgetController.clear();
-			_descriptionController.clear();
+      if (!mounted) return;
 
-			ScaffoldMessenger.of(context).showSnackBar(
-				const SnackBar(
-					content: Text('Travel idea shared successfully!'),
-					backgroundColor: AppColors.secondary,
-				),
-			);
-		} catch (_) {
-			if (!mounted) return;
+      _titleController.clear();
+      _destinationController.clear();
+      _durationController.clear();
+      _budgetController.clear();
+      _descriptionController.clear();
 
-			ScaffoldMessenger.of(context).showSnackBar(
-				const SnackBar(content: Text('Failed to share travel idea.')),
-			);
-		} finally {
-			if (mounted) {
-				setState(() => _isSubmitting = false);
-			}
-		}
-	}
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Travel idea shared successfully!'),
+          backgroundColor: AppColors.secondary,
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to share travel idea.')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
