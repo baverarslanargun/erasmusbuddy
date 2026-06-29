@@ -17,7 +17,7 @@
 
 Expected result: Firebase creates the account and the Home screen opens.
 
-Only the email and password are currently used to create the Firebase account. The additional registration fields are part of the current UI and are not stored by the MVP.
+The email and password create the Firebase account, and the username is saved as the Firebase display name. The additional Erasmus and travel-interest fields demonstrate the prototype direction but are not stored by the MVP.
 
 ## 2. Logout and Login
 

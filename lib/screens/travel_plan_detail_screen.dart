@@ -3,8 +3,6 @@ import 'package:erasmusbuddy/models/travel_idea.dart';
 import 'package:erasmusbuddy/services/travel_idea_service.dart';
 
 class TravelPlanDetailScreen extends StatefulWidget {
-  final String currentUserId = "user_123";
-
   const TravelPlanDetailScreen({super.key});
 
   static const routeName = '/travel-idea-detail';
@@ -16,27 +14,35 @@ class TravelPlanDetailScreen extends StatefulWidget {
 class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
   late Future<TravelIdea?> _travelIdeaFuture;
   final TravelIdeaService _service = TravelIdeaService();
+  String _travelIdeaId = '';
+  bool _hasLoadedIdea = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)!.settings.arguments;
-    final String travelIdeaId = (args is String) ? args : '';
-    _travelIdeaFuture = _service.getTravelIdeaById(travelIdeaId);
+    if (_hasLoadedIdea) return;
+
+    final args = ModalRoute.of(context)?.settings.arguments;
+    _travelIdeaId = (args is String) ? args : '';
+    _travelIdeaFuture = _service.getTravelIdeaById(_travelIdeaId);
+    _hasLoadedIdea = true;
+  }
+
+  void _retry() {
+    setState(() {
+      _travelIdeaFuture = _service.getTravelIdeaById(_travelIdeaId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: FutureBuilder<TravelIdea?>(
         future: _travelIdeaFuture,
         builder: (context, snapshot) {
           // Loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           // Error state
@@ -53,14 +59,24 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    snapshot.error.toString(),
+                    'Please check your connection and try again.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Go Back'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Go Back'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: _retry,
+                        child: const Text('Retry'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -73,7 +89,11 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.travel_explore, size: 64, color: Colors.grey),
+                  const Icon(
+                    Icons.travel_explore,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Travel idea not found',
@@ -135,7 +155,9 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                                     ),
                                     TextSpan(
                                       text: idea.createdByName,
-                                      style: const TextStyle(color: Colors.blue),
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -144,7 +166,10 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                             const SizedBox(width: 8),
                             Text(
                               idea.createdAt.toString().split(' ')[0],
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
                             ),
                           ],
                         ),
@@ -156,8 +181,13 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                             const Icon(Icons.location_on, color: Colors.blue),
                             const SizedBox(width: 5),
                             Expanded(
-                              child: Text(idea.destination,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                              child: Text(
+                                idea.destination,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -195,8 +225,13 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
 
                         const Divider(height: 40),
 
-                        const Text("Description",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Text(
+                          "Description",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Container(
                           width: double.infinity,
@@ -208,7 +243,10 @@ class _TravelPlanDetailScreenState extends State<TravelPlanDetailScreen> {
                           ),
                           child: Text(
                             idea.description,
-                            style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 100),

@@ -16,13 +16,26 @@ class TravelPlanListScreen extends StatefulWidget {
 
 class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
   final TravelIdeaService _travelIdeaService = TravelIdeaService();
+  late Stream<List<TravelIdea>> _travelIdeasStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _travelIdeasStream = _travelIdeaService.getTravelIdeas();
+  }
+
+  void _retry() {
+    setState(() {
+      _travelIdeasStream = _travelIdeaService.getTravelIdeas();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Travel Ideas')),
       body: StreamBuilder<List<TravelIdea>>(
-        stream: _travelIdeaService.getTravelIdeas(),
+        stream: _travelIdeasStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -35,10 +48,7 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
                 children: [
                   const Text('Failed to load travel ideas.'),
                   const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => setState(() {}),
-                    child: const Text('Retry'),
-                  ),
+                  ElevatedButton(onPressed: _retry, child: const Text('Retry')),
                 ],
               ),
             );
@@ -57,7 +67,11 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
               final idea = ideas[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, TravelPlanDetailScreen.routeName, arguments: idea.id);
+                  Navigator.pushNamed(
+                    context,
+                    TravelPlanDetailScreen.routeName,
+                    arguments: idea.id,
+                  );
                 },
                 child: Card(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -84,9 +98,8 @@ class _TravelPlanListScreenState extends State<TravelPlanListScreen> {
                             Expanded(
                               child: Text(
                                 idea.destination,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
